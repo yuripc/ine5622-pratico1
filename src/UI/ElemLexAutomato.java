@@ -20,31 +20,39 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-public class ElemLexAutomato extends JPanel implements ElemLex {
-	/**
-	 * 
-	 */
+public class ElemLexAutomato extends ElemLex {
 	private static final long serialVersionUID = 1L;
 
-	private JPanel panel;
+	private JPanel tabela;
 
 	private static final Insets insets = new Insets(0, 0, 0, 0);
 	private int linhas;
 	private int colunas;
 	private LinkedHashMap<Point, Component> mapa;
 
+	public ElemLexAutomato() {
+		super();
+		initialConfig();
+	}
+
+	public ElemLexAutomato(String s) throws Exception {
+		super(s);
+	}
+
 	/**
 	 * Create the panel.
 	 */
-	public ElemLexAutomato() {
+
+	@Override
+	protected void initialize() {
 		setLayout(new BorderLayout(0, 0));
 
 		JScrollPane scrollPane = new JScrollPane();
 		add(scrollPane);
 
-		panel = new JPanel();
-		scrollPane.setViewportView(panel);
-		panel.setLayout(new GridBagLayout());
+		tabela = new JPanel();
+		scrollPane.setViewportView(tabela);
+		tabela.setLayout(new GridBagLayout());
 
 		JPanel bottomPanel = new JPanel();
 		add(bottomPanel, BorderLayout.SOUTH);
@@ -151,7 +159,6 @@ public class ElemLexAutomato extends JPanel implements ElemLex {
 		panel_4.add(btnNewButton_3, gbc_btnNewButton_3);
 
 		mapa = new LinkedHashMap<Point, Component>();
-		initialConfig();
 	}
 
 	@Override
@@ -178,8 +185,7 @@ public class ElemLexAutomato extends JPanel implements ElemLex {
 	}
 
 	@Override
-	public void loadString(String s) throws Exception {
-		Main.debug("lading");
+	protected void loadString(String s) throws Exception {
 		String[] sLinhas = s.split("\n");
 		linhas = sLinhas.length;
 		colunas = sLinhas[0].split("\t").length;
@@ -204,7 +210,7 @@ public class ElemLexAutomato extends JPanel implements ElemLex {
 		return "Automato";
 	}
 
-	private void initialConfig() {
+	protected void initialConfig() {
 		addComponent(2, 0);
 		addComponent(0, 1);
 		addComponent(1, 1);
@@ -227,10 +233,7 @@ public class ElemLexAutomato extends JPanel implements ElemLex {
 			textField.setBorder(new LineBorder(new Color(0, 0, 0)));
 			textField.setHorizontalAlignment(JTextField.CENTER);
 
-			Main.debug("cab"+s);
-			textField.setText("aa"+s);
-			Main.debug(s+"_"+textField.getText());
-			textField.repaint();
+			textField.setText(s);
 			panelBase.add(textField, BorderLayout.CENTER);
 			panelBase.repaint();
 		} else {
@@ -240,9 +243,7 @@ public class ElemLexAutomato extends JPanel implements ElemLex {
 			textArea.setWrapStyleWord(false);
 			textArea.setMargin(new Insets(5, 5, 5, 5));
 
-			Main.debug("not cab"+s);
-			textArea.setText("a"+s);
-			Main.debug(s+"_"+textArea.getText());
+			textArea.setText(s);
 
 			scrollPane.setViewportView(textArea);
 			scrollPane.setPreferredSize(new Dimension(60, 45));
@@ -276,8 +277,9 @@ public class ElemLexAutomato extends JPanel implements ElemLex {
 		JPanel component = genComponent(ehCabecalho, s);
 
 		GridBagConstraints gbc = new GridBagConstraints(coluna, linha, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, insets, 0, 0);
-		panel.add(component, gbc);
-		panel.revalidate();
+		tabela.add(component, gbc);
+		tabela.revalidate();
+		this.revalidate();
 
 		mapa.put(new Point(coluna, linha), component.getComponent(0));
 

@@ -369,7 +369,7 @@ public class Main {
 		}
 	}
 
-	private JPanel[] getPanels(){
-		return new JPanel[]{(JPanel) splitPane.getLeftComponent(), (JPanel) splitPane.getRightComponent()};
+	private JPanel[] getPanels() {
+		return new JPanel[] { (JPanel) splitPane.getLeftComponent(), (JPanel) splitPane.getRightComponent() };
 	}
 }

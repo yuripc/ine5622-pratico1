@@ -3,21 +3,24 @@ package UI;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class ElemLexGR extends JPanel implements ElemLex {
-	/**
-	 * 
-	 */
+public class ElemLexGR extends ElemLex {
 	private static final long serialVersionUID = 1L;
+
 	JTextArea textArea;
 
-	/**
-	 * Create the panel.
-	 */
 	public ElemLexGR() {
+		super();
+	}
+
+	public ElemLexGR(String s) throws Exception {
+		super(s);
+	}
+
+	@Override
+	protected void initialize() {
 		setLayout(new BorderLayout(0, 0));
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -34,7 +37,7 @@ public class ElemLexGR extends JPanel implements ElemLex {
 	}
 
 	@Override
-	public void loadString(String s) throws Exception {
+	protected void loadString(String s) throws Exception {
 		textArea.setText(s);
 	}
 

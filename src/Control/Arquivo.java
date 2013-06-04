@@ -11,8 +11,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import UI.ElemLex;
-
 public class Arquivo {
 
 	protected String currentFile = "";
@@ -75,8 +73,8 @@ public class Arquivo {
 
 	public void salvarComo(JPanel[] paineis) throws IOException {
 		if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-			String caminhoArquivo = fileChooser.getSelectedFile().getAbsolutePath();
-			gravar(paineis, caminhoArquivo);
+			currentFile = fileChooser.getSelectedFile().getAbsolutePath();
+			gravar(paineis, currentFile);
 		}
 	}
 
@@ -110,15 +108,17 @@ public class Arquivo {
 			try {
 				BufferedReader leitor = new BufferedReader(new FileReader(fileChooser.getSelectedFile()));
 				StringBuilder sb = new StringBuilder();
-				String line = leitor.readLine();
+				String linha = leitor.readLine();
 
-				while (line != null) {
-					sb.append(line);
+				while (linha != null) {
+					sb.append(linha);
 					sb.append("\n");
-					line = leitor.readLine();
+					linha = leitor.readLine();
 				}
 
 				leitor.close();
+
+				currentFile = fileChooser.getSelectedFile().getAbsolutePath();
 
 				return converterParaPaineis(sb.toString());
 			} catch (Exception e) {
@@ -141,11 +141,9 @@ public class Arquivo {
 			String tipoPanel = entrada.substring(0, entrada.indexOf("\n"));
 			String elemento = entrada.substring(entrada.indexOf("\n")+1,entrada.lastIndexOf('\n'));
 			if (tipoPanel.equals("Automato")) {
-				paneis[i] = new UI.ElemLexAutomato();
-				((ElemLex) paneis[i]).loadString(elemento);
+				paneis[i] = new UI.ElemLexAutomato(elemento);
 			} else if (tipoPanel.equals("GR")) {
-				paneis[i] = new UI.ElemLexGR();
-				((ElemLex) paneis[i]).loadString(elemento);
+				paneis[i] = new UI.ElemLexGR(elemento);
 			}
 		}
 		return paneis;
