@@ -21,6 +21,19 @@ public class Main {
 	private JFrame frame;
 	private JSplitPane splitPane;
 	private Control.Arquivo arquivo = new Control.Arquivo();
+	private JMenuItem mntmUniao;
+	private JMenuItem mntmComplemento;
+	private JMenuItem mntmA1Determinizar;
+	private JMenuItem mntmA1Minimizar;
+	private JMenuItem mntmA1Reconhecer;
+	private JMenuItem mntmA1GerarSentencas;
+	private JMenuItem mntmA1Converter;
+	private JMenuItem mntmA2Determinizar;
+	private JMenuItem mntmA2Minimizar;
+	private JMenuItem mntmA2GerarSentencas;
+	private JMenuItem mntmA2Reconhecer;
+	private JMenuItem mntmA2Converter;
+	private JMenuItem mntmNovo;
 
 	/**
 	 * Launch the application.
@@ -66,6 +79,10 @@ public class Main {
 		JMenu mnArquivo = new JMenu("Arquivo");
 		menuBar.add(mnArquivo);
 
+		mntmNovo = new JMenuItem("Novo");
+		mntmNovo.setEnabled(false);
+		mnArquivo.add(mntmNovo);
+
 		JMenuItem mntmAbrir = new JMenuItem("Abrir");
 		mnArquivo.add(mntmAbrir);
 
@@ -87,10 +104,10 @@ public class Main {
 		JMenu mnAcoes = new JMenu("Ações");
 		menuBar.add(mnAcoes);
 
-		JMenuItem mntmUniao = new JMenuItem("União");
+		mntmUniao = new JMenuItem("União");
 		mnAcoes.add(mntmUniao);
 
-		JMenuItem mntmComplemento = new JMenuItem("Complemento");
+		mntmComplemento = new JMenuItem("Complemento");
 		mnAcoes.add(mntmComplemento);
 
 		JSeparator separator_4 = new JSeparator();
@@ -114,25 +131,25 @@ public class Main {
 		JSeparator sepA11 = new JSeparator();
 		mnA1.add(sepA11);
 
-		JMenuItem mntmA1Determinizar = new JMenuItem("Determinizar");
+		mntmA1Determinizar = new JMenuItem("Determinizar");
 		mnA1.add(mntmA1Determinizar);
 
-		JMenuItem mntmA1Minimizar = new JMenuItem("Minimizar");
+		mntmA1Minimizar = new JMenuItem("Minimizar");
 		mnA1.add(mntmA1Minimizar);
 
 		JSeparator SepA12 = new JSeparator();
 		mnA1.add(SepA12);
 
-		JMenuItem mntmA1Reconhecer = new JMenuItem("Reconhecer Senten\u00E7a");
+		mntmA1Reconhecer = new JMenuItem("Reconhecer Senten\u00E7a");
 		mnA1.add(mntmA1Reconhecer);
 
-		JMenuItem mntmA1GerarSentencas = new JMenuItem("Senten\u00E7as Reconhecidas");
+		mntmA1GerarSentencas = new JMenuItem("Senten\u00E7as Reconhecidas");
 		mnA1.add(mntmA1GerarSentencas);
 
 		JSeparator SepA13 = new JSeparator();
 		mnA1.add(SepA13);
 
-		final JMenuItem mntmA1Converter = new JMenuItem("Converter");
+		mntmA1Converter = new JMenuItem("Converter");
 		mnA1.add(mntmA1Converter);
 
 		JMenu mnA2 = new JMenu("Elemento Direita");
@@ -150,32 +167,45 @@ public class Main {
 		JSeparator sepA21 = new JSeparator();
 		mnA2.add(sepA21);
 
-		JMenuItem mntmA2Determinizar = new JMenuItem("Determinizar");
+		mntmA2Determinizar = new JMenuItem("Determinizar");
 		mnA2.add(mntmA2Determinizar);
 
-		JMenuItem mntmA2Minimizar = new JMenuItem("Minimizar");
+		mntmA2Minimizar = new JMenuItem("Minimizar");
 		mnA2.add(mntmA2Minimizar);
 
 		JSeparator SepA22 = new JSeparator();
 		mnA2.add(SepA22);
 
-		JMenuItem mntmA2Reconhecer = new JMenuItem("Reconhecer Senten\u00E7a");
+		mntmA2Reconhecer = new JMenuItem("Reconhecer Senten\u00E7a");
 		mnA2.add(mntmA2Reconhecer);
 
-		JMenuItem mntmA2GerarSentencas = new JMenuItem("Senten\u00E7as Reconhecidas");
+		mntmA2GerarSentencas = new JMenuItem("Senten\u00E7as Reconhecidas");
 		mnA2.add(mntmA2GerarSentencas);
 
 		JSeparator SepA23 = new JSeparator();
 		mnA2.add(SepA23);
 
-		final JMenuItem mntmA2Converter = new JMenuItem("Converter");
+		mntmA2Converter = new JMenuItem("Converter");
 		mnA2.add(mntmA2Converter);
 
 		splitPane = new JSplitPane();
-		splitPane.setLeftComponent(new JPanel());
-		splitPane.setRightComponent(new JPanel());
+		addComponent(true, new JPanel());
+		addComponent(false, new JPanel());
 
 		frame.getContentPane().add(splitPane, BorderLayout.CENTER);
+
+		mntmNovo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (JOptionPane.showConfirmDialog(null, "Todas as alterações não salvas serão perdidas,\nContinuar?", "Confirmação", JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+					arquivo.resetCurrentFile();
+					addComponent(true, new JPanel());
+					addComponent(false, new JPanel());
+					mntmNovo.setEnabled(false);
+				}
+			}
+		});
 
 		mntmAbrir.addActionListener(new ActionListener() {
 			@Override
@@ -183,8 +213,8 @@ public class Main {
 				// TODO
 				try {
 					JPanel[] panels = arquivo.abrir();
-					splitPane.setLeftComponent(panels[0]);
-					splitPane.setRightComponent(panels[1]);
+					addComponent(true, panels[0]);
+					addComponent(false, panels[1]);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -252,16 +282,14 @@ public class Main {
 		mntmA1NovoAutomato.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				splitPane.setLeftComponent(new ElemLexAutomato());
-				mntmA1Converter.setText("Converter para GR");
+				addComponent(true, new ElemLexAutomato());
 			}
 		});
 
 		mntmA1NovoGR.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				splitPane.setLeftComponent(new ElemLexGR());
-				mntmA1Converter.setText("Converter para Automato");
+				addComponent(true, new ElemLexGR());
 			}
 		});
 
@@ -308,16 +336,14 @@ public class Main {
 		mntmA2NovoAutomato.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				splitPane.setRightComponent(new ElemLexAutomato());
-				mntmA2Converter.setText("Converter para GR");
+				addComponent(false, new ElemLexAutomato());
 			}
 		});
 
 		mntmA2NovoGR.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				splitPane.setRightComponent(new ElemLexGR());
-				mntmA2Converter.setText("Converter para Automato");
+				addComponent(false, new ElemLexGR());
 			}
 		});
 
@@ -362,7 +388,55 @@ public class Main {
 		});
 	}
 
+	private void addComponent(boolean isLeft, JPanel component) {
+		boolean habilitarMenuElemento = component instanceof ElemLex;
+		if (isLeft) {
+			splitPane.setLeftComponent(component);
+
+			mntmA1Determinizar.setEnabled(habilitarMenuElemento);
+			mntmA1Minimizar.setEnabled(habilitarMenuElemento);
+			mntmA1Reconhecer.setEnabled(habilitarMenuElemento);
+			mntmA1GerarSentencas.setEnabled(habilitarMenuElemento);
+			mntmA1Converter.setEnabled(habilitarMenuElemento);
+
+			if (component instanceof ElemLexAutomato) {
+				mntmA1Converter.setText("Converter para GR");
+			} else if (component instanceof ElemLexGR) {
+				mntmA1Converter.setText("Converter para Automato");
+			} else {
+				mntmA1Converter.setText("Converter para");
+			}
+
+		} else {
+			splitPane.setRightComponent(component);
+
+			mntmA2Determinizar.setEnabled(habilitarMenuElemento);
+			mntmA2Minimizar.setEnabled(habilitarMenuElemento);
+			mntmA2Reconhecer.setEnabled(habilitarMenuElemento);
+			mntmA2GerarSentencas.setEnabled(habilitarMenuElemento);
+			mntmA2Converter.setEnabled(habilitarMenuElemento);
+			if (component instanceof ElemLexAutomato) {
+				mntmA2Converter.setText("Converter para GR");
+			} else if (component instanceof ElemLexGR) {
+				mntmA2Converter.setText("Converter para Automato");
+			} else {
+				mntmA2Converter.setText("Converter para");
+			}
+		}
+
+		if (habilitarMenuElemento) {
+			mntmNovo.setEnabled(true);
+		}
+
+		boolean habilitarMenuAcao = splitPane.getLeftComponent() instanceof ElemLex && splitPane.getRightComponent() instanceof ElemLex;
+
+		mntmUniao.setEnabled(habilitarMenuAcao);
+		mntmComplemento.setEnabled(habilitarMenuAcao);
+
+	}
+
 	private JPanel[] getPanels() {
 		return new JPanel[] { (JPanel) splitPane.getLeftComponent(), (JPanel) splitPane.getRightComponent() };
 	}
+
 }
