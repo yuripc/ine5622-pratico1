@@ -1,9 +1,7 @@
 package UI;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -16,9 +14,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
 
 public class ElemLexAutomato extends ElemLex {
 	private static final long serialVersionUID = 1L;
@@ -166,18 +161,14 @@ public class ElemLexAutomato extends ElemLex {
 		String s = "";
 		for (int y = 0; y < linhas; y++) {
 			for (int x = 0; x < colunas; x++) {
-				String textoCelula = "";
-				if (y == 0 || x <= 1) {
-					if (!(y == 0 && x <= 1)) {
-						textoCelula = ((JTextField) mapa.get(new Point(x, y))).getText();
-					}
+
+				if (!(y == 0 && x <= 1)) {
+					s += ((Celula) mapa.get(new Point(x, y))).getText();
 				} else {
-					textoCelula = ((JTextArea) ((JScrollPane) mapa.get(new Point(x, y))).getViewport().getView()).getText();
+					s += " ";
 				}
-				if (textoCelula.equals("")) {
-					textoCelula = " ";
-				}
-				s += textoCelula + "\t";
+
+				s += "\t";
 			}
 			s += "\n";
 		}
@@ -215,40 +206,6 @@ public class ElemLexAutomato extends ElemLex {
 		colunas = 3;
 	}
 
-	private JPanel genComponent(boolean ehCabecalho, String string) {
-		if (string.equals(" ")) {
-			string = "";
-		}
-		String s = new String(string);
-		JPanel panelBase = new JPanel();
-		panelBase.setLayout(new BorderLayout(0, 0));
-		if (ehCabecalho) {
-			JTextField textField = new JTextField();
-			textField.setPreferredSize(new Dimension(30, 20));
-			textField.setBorder(new LineBorder(new Color(0, 0, 0)));
-			textField.setHorizontalAlignment(JTextField.CENTER);
-
-			textField.setText(s);
-			panelBase.add(textField, BorderLayout.CENTER);
-			panelBase.repaint();
-		} else {
-			JScrollPane scrollPane = new JScrollPane();
-			JTextArea textArea = new JTextArea();
-			textArea.setLineWrap(true);
-			textArea.setWrapStyleWord(false);
-			textArea.setMargin(new Insets(5, 5, 5, 5));
-
-			textArea.setText(s);
-
-			scrollPane.setViewportView(textArea);
-			scrollPane.setPreferredSize(new Dimension(60, 45));
-			scrollPane.setBorder(new LineBorder(new Color(0, 0, 0)));
-			panelBase.add(scrollPane, BorderLayout.CENTER);
-		}
-		panelBase.revalidate();
-		return panelBase;
-	}
-
 	private void addColumn() {
 		for (int i = 0; i < linhas; i++) {
 			addComponent(colunas, i);
@@ -268,15 +225,17 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	private void addComponent(String s, int coluna, int linha) {
-		boolean ehCabecalho = coluna <= 1 || linha == 0;
-		JPanel component = genComponent(ehCabecalho, s);
+		JPanel component;
+		if (coluna <= 1 || linha == 0) {
+			component = new CelulaCabecalho(s);
+		} else {
+			component = new CelulaCorpo(s);
+		}
 
 		GridBagConstraints gbc = new GridBagConstraints(coluna, linha, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, insets, 0, 0);
 		tabela.add(component, gbc);
-		tabela.revalidate();
-		this.revalidate();
 
-		mapa.put(new Point(coluna, linha), component.getComponent(0));
+		mapa.put(new Point(coluna, linha), component);
 
 	}
 

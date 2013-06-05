@@ -96,8 +96,8 @@ public class Arquivo {
 	private String converterParaTexto(JPanel[] paineis) {
 		String s = "";
 		for (int i = 0; i < paineis.length; i++) {
-			try {
-				s += "#";
+			s += "#";
+			if (paineis[i] instanceof UI.ElemLex) {
 				UI.ElemLex painel = (UI.ElemLex) paineis[i];
 				if (painel instanceof UI.ElemLexAutomato) {
 					s += "Automato";
@@ -105,8 +105,9 @@ public class Arquivo {
 					s += "GR";
 				}
 				s += "\n" + painel.toString();
-			} catch (Exception e) {
-				s += "#null";
+
+			} else {
+				s += "null";
 			}
 			s += "\n";
 		}
