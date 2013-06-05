@@ -16,7 +16,7 @@ public class Arquivo {
 	protected String currentFile = "";
 	protected JFileChooser fileChooser = new JFileChooser();
 	protected String extensao;
-//teste
+//teste 2
 	protected static Arquivo instance;
 
 	public Arquivo() {
