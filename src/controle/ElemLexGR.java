@@ -1,4 +1,4 @@
-package Control;
+package controle;
 
 public class ElemLexGR extends ElemLex {
 

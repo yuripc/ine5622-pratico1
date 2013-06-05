@@ -1,4 +1,4 @@
-package UI;
+package visao;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -155,6 +155,7 @@ public class ElemLexAutomato extends ElemLex {
 
 		mapa = new LinkedHashMap<Point, Component>();
 	}
+
 
 	@Override
 	public String toString() {
