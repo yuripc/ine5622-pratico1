@@ -18,7 +18,6 @@ import javax.swing.JSplitPane;
 
 public class Main {
 
-	private final static boolean devVersion = true;
 	private JFrame frame;
 	private JSplitPane splitPane;
 	private Control.Arquivo arquivo = new Control.Arquivo();
@@ -97,7 +96,7 @@ public class Main {
 		JSeparator separator_4 = new JSeparator();
 		mnAcoes.add(separator_4);
 
-		JMenuItem mntmDebug = new JMenuItem("Debug");
+		JMenuItem mntmDebug = new JMenuItem("System.out.println");
 		mnAcoes.add(mntmDebug);
 
 		JMenu mnA1 = new JMenu("Elemento Esquerda");
@@ -231,7 +230,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -239,7 +238,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -270,7 +269,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -278,7 +277,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -286,7 +285,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -294,7 +293,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -302,7 +301,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -326,7 +325,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -334,7 +333,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -342,7 +341,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -350,7 +349,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
 
@@ -358,15 +357,9 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				debug("Ação não configurada");
+				System.out.println("Ação não configurada");
 			}
 		});
-	}
-
-	public static void debug(String s) {
-		if (devVersion) {
-			System.out.println(s);
-		}
 	}
 
 	private JPanel[] getPanels() {

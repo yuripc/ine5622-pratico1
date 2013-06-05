@@ -1,5 +1,4 @@
 package Control;
-import UI.Main;
 
 public class ElemLexGR extends ElemLex {
 
@@ -15,14 +14,14 @@ public class ElemLexGR extends ElemLex {
 
 	@Override
 	public ElemLexAutomato toAutomato() {
-		Main.debug("n‹o implementado");
+		System.out.println("n‹o implementado");
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ElemLexGR processar(String[] o) {
-		Main.debug("n‹o implementado");
+		System.out.println("n‹o implementado");
 		// TODO Auto-generated method stub
 		return null;
 	}

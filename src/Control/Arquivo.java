@@ -27,8 +27,13 @@ public class Arquivo {
 
 			@Override
 			public void approveSelection() {
-				File f = new File(getSelectedFile().getAbsolutePath() + extensao);
-				if (f.exists() && getDialogType() == SAVE_DIALOG) {
+				String selectedFile = getSelectedFile().getAbsolutePath();
+				if (!selectedFile.toLowerCase().endsWith(extensao)) {
+					selectedFile += extensao;
+				}
+				File f = new File(selectedFile);
+				setSelectedFile(f);
+				if (f.exists() && !selectedFile.equals(currentFile) && getDialogType() == SAVE_DIALOG) {
 					int result = JOptionPane.showConfirmDialog(this, "The file exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION,
 							JOptionPane.WARNING_MESSAGE);
 					switch (result) {
@@ -92,8 +97,13 @@ public class Arquivo {
 		String s = "";
 		for (int i = 0; i < paineis.length; i++) {
 			try {
+				s += "#";
 				UI.ElemLex painel = (UI.ElemLex) paineis[i];
-				s += "#" + painel.tipo();
+				if (painel instanceof UI.ElemLexAutomato) {
+					s += "Automato";
+				} else {
+					s += "GR";
+				}
 				s += "\n" + painel.toString();
 			} catch (Exception e) {
 				s += "#null";
@@ -139,11 +149,13 @@ public class Arquivo {
 		for (int i = 0; i <= 1; i++) {
 			String entrada = elementos[i + 1];
 			String tipoPanel = entrada.substring(0, entrada.indexOf("\n"));
-			String elemento = entrada.substring(entrada.indexOf("\n")+1,entrada.lastIndexOf('\n'));
+			String elemento = entrada.substring(entrada.indexOf("\n") + 1, entrada.lastIndexOf('\n'));
 			if (tipoPanel.equals("Automato")) {
 				paneis[i] = new UI.ElemLexAutomato(elemento);
 			} else if (tipoPanel.equals("GR")) {
 				paneis[i] = new UI.ElemLexGR(elemento);
+			} else {
+				paneis[i] = new JPanel();
 			}
 		}
 		return paneis;

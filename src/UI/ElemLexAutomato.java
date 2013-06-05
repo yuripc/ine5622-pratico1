@@ -205,11 +205,6 @@ public class ElemLexAutomato extends ElemLex {
 		}
 	}
 
-	@Override
-	public String tipo() {
-		return "Automato";
-	}
-
 	protected void initialConfig() {
 		addComponent(2, 0);
 		addComponent(0, 1);

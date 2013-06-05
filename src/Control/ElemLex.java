@@ -2,7 +2,6 @@ package Control;
 import java.util.Arrays;
 import java.util.Vector;
 
-import UI.Main;
 
 public abstract class ElemLex {
 
@@ -84,31 +83,31 @@ public abstract class ElemLex {
 	public ElemLex minimizar(ElemLex vElem) {
 		ElemLexAutomato elem = vElem.toAutomato();
 		// TODO Auto-generated method stub
-		Main.debug("n‹o implementado");
+		System.out.println("n‹o implementado");
 		return null;
 	}
 
 	public boolean sentencaValida(ElemLex elem, String s) {
 		// TODO Auto-generated method stub
-		Main.debug("n‹o implementado");
+		System.out.println("n‹o implementado");
 		return false;
 	}
 
 	public String[] sentencasPossiveis(ElemLex elem, int n) {
 		// TODO Auto-generated method stub
-		Main.debug("n‹o implementado");
+		System.out.println("n‹o implementado");
 		return null;
 	}
 
 	public ElemLex uniao(ElemLex outroElem) {
 		// TODO Auto-generated method stub
-		Main.debug("n‹o implementado");
+		System.out.println("n‹o implementado");
 		return null;
 	}
 
 	public ElemLex complemento(ElemLex elem1, ElemLex elem2) {
 		// TODO Auto-generated method stub
-		Main.debug("n‹o implementado");
+		System.out.println("n‹o implementado");
 		return null;
 	}
 

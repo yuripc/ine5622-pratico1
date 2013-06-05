@@ -1,7 +1,6 @@
 package Control;
 import java.util.Vector;
 
-import UI.Main;
 
 public class ElemLexAutomato extends ElemLex {
 
@@ -12,7 +11,7 @@ public class ElemLexAutomato extends ElemLex {
 	@Override
 	public ElemLexGR toGR() {
 		// TODO Auto-generated method stub
-		Main.debug("não implementado");
+		System.out.println("não implementado");
 		return null;
 	}
 
@@ -87,7 +86,7 @@ public class ElemLexAutomato extends ElemLex {
 		// Valida operações
 
 		// TODO Auto-generated method stub
-		Main.debug("não implementado");
+		System.out.println("não implementado");
 		return null;
 	}
 }

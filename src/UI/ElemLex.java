@@ -18,5 +18,4 @@ public abstract class ElemLex extends JPanel {
 	protected abstract void initialize();
 	protected abstract void loadString(String s) throws Exception;
 
-	public abstract String tipo();
 }
