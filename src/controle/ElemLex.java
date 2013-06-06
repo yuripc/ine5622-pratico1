@@ -12,16 +12,6 @@ public abstract class ElemLex {
 	Vector<Vector<String>> operacoes;
 	String arquivo;
 
-	protected ElemLex(String elementoLexico) throws Exception {
-		ElemLex elem = processar(elementoLexico);
-
-		this.alfabeto = elem.alfabeto;
-		this.estados = elem.estados;
-		this.estadoInicial = elem.estadoInicial;
-		this.estadosFinais = elem.estadosFinais;
-		this.operacoes = elem.operacoes;
-	}
-
 	public ElemLex determinizar() {
 		ElemLexAutomato elem = toAutomato();
 
@@ -135,7 +125,5 @@ public abstract class ElemLex {
 	public abstract ElemLexGR toGR();
 
 	public abstract ElemLexAutomato toAutomato();
-
-	protected abstract ElemLex processar(String s) throws Exception;
 
 }
