@@ -1,4 +1,4 @@
-package Control;
+package controle;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -97,9 +97,9 @@ public class Arquivo {
 		String s = "";
 		for (int i = 0; i < paineis.length; i++) {
 			s += "#";
-			if (paineis[i] instanceof UI.ElemLex) {
-				UI.ElemLex painel = (UI.ElemLex) paineis[i];
-				if (painel instanceof UI.ElemLexAutomato) {
+			if (paineis[i] instanceof visao.ElemLex) {
+				visao.ElemLex painel = (visao.ElemLex) paineis[i];
+				if (painel instanceof visao.ElemLexAutomato) {
 					s += "Automato";
 				} else {
 					s += "GR";
@@ -152,9 +152,9 @@ public class Arquivo {
 			String tipoPanel = entrada.substring(0, entrada.indexOf("\n"));
 			String elemento = entrada.substring(entrada.indexOf("\n") + 1, entrada.lastIndexOf('\n'));
 			if (tipoPanel.equals("Automato")) {
-				paneis[i] = new UI.ElemLexAutomato(elemento);
+				paneis[i] = new visao.ElemLexAutomato(elemento);
 			} else if (tipoPanel.equals("GR")) {
-				paneis[i] = new UI.ElemLexGR(elemento);
+				paneis[i] = new visao.ElemLexGR(elemento);
 			} else {
 				paneis[i] = new JPanel();
 			}

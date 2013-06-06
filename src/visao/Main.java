@@ -1,4 +1,4 @@
-package UI;
+package visao;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -20,7 +20,7 @@ public class Main {
 
 	private JFrame frame;
 	private JSplitPane splitPane;
-	private Control.Arquivo arquivo = new Control.Arquivo();
+	private controle.Arquivo arquivo = new controle.Arquivo();
 	private JMenuItem mntmUniao;
 	private JMenuItem mntmComplemento;
 	private JMenuItem mntmA1Determinizar;

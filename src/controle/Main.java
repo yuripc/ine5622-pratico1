@@ -1,9 +1,9 @@
-package Control;
+package controle;
 
 public class Main {
 
 	public static void main(String[] args) {
-		UI.Main ui = new UI.Main();
+		visao.Main ui = new visao.Main();
 		ui.show();
 	}
 

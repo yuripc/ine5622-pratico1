@@ -1,4 +1,4 @@
-package UI;
+package visao;
 
 import javax.swing.JPanel;
 
