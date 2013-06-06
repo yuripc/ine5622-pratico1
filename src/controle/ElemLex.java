@@ -1,7 +1,7 @@
 package controle;
+
 import java.util.Arrays;
 import java.util.Vector;
-
 
 public abstract class ElemLex {
 
@@ -10,7 +10,6 @@ public abstract class ElemLex {
 	String estadoInicial;
 	Vector<String> estadosFinais;
 	Vector<Vector<String>> operacoes;
-	String arquivo;
 
 	public ElemLex determinizar() {
 		ElemLexAutomato elem = toAutomato();
@@ -21,14 +20,11 @@ public abstract class ElemLex {
 
 		Vector<String> estadosPendentes = new Vector<String>();
 		estadosPendentes.add(elem.estadoInicial);
-
 		while (estadosPendentes.size() > 0) {
 			String estado = estadosPendentes.get(0);
-
 			// Loop para cada entrada possivel
 			for (char entrada : elem.alfabeto) {
 				String proximoEstado = "";
-
 				// Loop para cada letra do estado global
 				for (char estadoSub : estado.toCharArray()) {
 					String[] proximosEstadosSub = elem.proximoEstado(estadoSub, entrada);
@@ -110,8 +106,10 @@ public abstract class ElemLex {
 		}
 	}
 
-	public String[] proximoEstado(char estadoAtual, char entrada) {
-		return proximoEstado(estadoAtual, entrada);
+	protected String[] proximoEstado(char estadoAtual, char entrada) {
+		// TODO Auto-generated method stub
+		System.out.println("n‹o implementado");
+		return null;
 	}
 
 	protected ElemLex returnToOrigin(ElemLex elemGerado) {

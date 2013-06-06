@@ -8,7 +8,7 @@ public class ElemLexAutomato extends ElemLex {
 		String[] s = input.split("\n");
 		alfabeto = new Vector<Character>();
 		estados = new Vector<String>();
-		String estadoInicial = "";
+		estadoInicial = "";
 		estadosFinais = new Vector<String>();
 		operacoes = new Vector<Vector<String>>();
 
@@ -34,7 +34,7 @@ public class ElemLexAutomato extends ElemLex {
 				estadosFinais.add(estado);
 			}
 			if (coluna0.matches("->")) {
-				if (estadoInicial == "") {
+				if (estadoInicial.equals("")) {
 					estadoInicial = estado;
 				} else {
 					throw new Exception("Ja existe estado inicial - linha " + linha);
@@ -46,7 +46,7 @@ public class ElemLexAutomato extends ElemLex {
 			}
 		}
 
-		if (estadoInicial == "") {
+		if (estadoInicial.equals("")) {
 			throw new Exception("Nenhum estado inicial definido");
 		} else if (estadosFinais.size() == 0) {
 			throw new Exception("Nenhum estado final definido");
