@@ -12,7 +12,7 @@ public abstract class ElemLex {
 	Vector<Vector<String>> operacoes;
 	String arquivo;
 
-	protected ElemLex(String[] elementoLexico) throws Exception {
+	protected ElemLex(String elementoLexico) throws Exception {
 		ElemLex elem = processar(elementoLexico);
 
 		this.alfabeto = elem.alfabeto;
@@ -80,20 +80,20 @@ public abstract class ElemLex {
 		return returnToOrigin(elem);
 	}
 
-	public ElemLex minimizar(ElemLex vElem) {
-		ElemLexAutomato elem = vElem.toAutomato();
+	public ElemLex minimizar() {
+		ElemLexAutomato elem = this.toAutomato();
 		// TODO Auto-generated method stub
 		System.out.println("n‹o implementado");
 		return null;
 	}
 
-	public boolean sentencaValida(ElemLex elem, String s) {
+	public boolean reconhecerSentenca(String s) {
 		// TODO Auto-generated method stub
 		System.out.println("n‹o implementado");
 		return false;
 	}
 
-	public String[] sentencasPossiveis(ElemLex elem, int n) {
+	public String[] gerarSentencas(int n) {
 		// TODO Auto-generated method stub
 		System.out.println("n‹o implementado");
 		return null;
@@ -105,7 +105,7 @@ public abstract class ElemLex {
 		return null;
 	}
 
-	public ElemLex complemento(ElemLex elem1, ElemLex elem2) {
+	public ElemLex complemento(ElemLex outroElem) {
 		// TODO Auto-generated method stub
 		System.out.println("n‹o implementado");
 		return null;
@@ -136,6 +136,6 @@ public abstract class ElemLex {
 
 	public abstract ElemLexAutomato toAutomato();
 
-	public abstract ElemLex processar(String[] o) throws Exception;
+	protected abstract ElemLex processar(String s) throws Exception;
 
 }

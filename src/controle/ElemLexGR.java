@@ -2,7 +2,7 @@ package controle;
 
 public class ElemLexGR extends ElemLex {
 
-	public ElemLexGR(String[] elementoLexico) throws Exception {
+	public ElemLexGR(String elementoLexico) throws Exception {
 		super(elementoLexico);
 	}
 
@@ -20,7 +20,7 @@ public class ElemLexGR extends ElemLex {
 	}
 
 	@Override
-	public ElemLexGR processar(String[] o) {
+	public ElemLexGR processar(String s) {
 		System.out.println("n‹o implementado");
 		// TODO Auto-generated method stub
 		return null;

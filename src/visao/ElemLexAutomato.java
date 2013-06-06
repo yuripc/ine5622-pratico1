@@ -156,7 +156,6 @@ public class ElemLexAutomato extends ElemLex {
 		mapa = new LinkedHashMap<Point, Component>();
 	}
 
-
 	@Override
 	public String toString() {
 		String s = "";

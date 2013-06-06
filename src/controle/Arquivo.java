@@ -17,8 +17,6 @@ public class Arquivo {
 	protected JFileChooser fileChooser = new JFileChooser();
 	protected String extensao;
 
-	protected static Arquivo instance;
-
 	public Arquivo() {
 		currentFile = "";
 		extensao = ".afgr";

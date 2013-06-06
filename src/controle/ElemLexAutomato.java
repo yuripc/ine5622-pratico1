@@ -1,10 +1,10 @@
 package controle;
-import java.util.Vector;
 
+import java.util.Vector;
 
 public class ElemLexAutomato extends ElemLex {
 
-	public ElemLexAutomato(String[] elementoLexico) throws Exception {
+	public ElemLexAutomato(String elementoLexico) throws Exception {
 		super(elementoLexico);
 	}
 
@@ -21,8 +21,8 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	@Override
-	public ElemLexAutomato processar(String[] o) throws Exception {
-
+	protected ElemLexAutomato processar(String s) throws Exception {
+		String[] o = s.split("\n");
 		Vector<Character> vAlfabeto = new Vector<Character>();
 		Vector<String> vEstados = new Vector<String>();
 		String vEstadoInicial = "";
@@ -45,15 +45,21 @@ public class ElemLexAutomato extends ElemLex {
 			} else {
 				throw new Exception("Caractere inválido no estado " + estado + " - linha " + linha);
 			}
-			if (tabela[linha][0].matches("\\*")) {
+
+			String coluna0 = tabela[linha][0];
+			if (coluna0.matches("\\*")) {
 				vEstadosFinais.add(estado);
 			}
-			if (tabela[linha][0].matches("->")) {
+			if (coluna0.matches("->")) {
 				if (vEstadoInicial == "") {
 					vEstadoInicial = estado;
 				} else {
 					throw new Exception("Ja existe estado inicial - linha " + linha);
 				}
+			}
+			if (!((coluna0.length() == 3 && coluna0.matches("\\*") && coluna0.matches("->")) || (coluna0.length() == 2 && coluna0.matches("->"))
+					|| (coluna0.length() == 1 && coluna0.matches("\\*")) || (coluna0.length() == 0))) {
+				throw new Exception("Apenas '->' ou '*' são válidos na coluna 0 - linha " + linha);
 			}
 		}
 
@@ -71,7 +77,7 @@ public class ElemLexAutomato extends ElemLex {
 				throw new Exception("Caractere de entrada contem mais de um simbolo - coluna " + coluna);
 			}
 			char caractere = tabela[0][coluna].charAt(0);
-			if ((caractere + "").matches("a-z0-9")) {
+			if ((caractere + "").matches("[a-z0-9]")) {
 				if (!vAlfabeto.contains(caractere)) {
 					vAlfabeto.add(caractere);
 				} else {
@@ -83,7 +89,7 @@ public class ElemLexAutomato extends ElemLex {
 
 		}
 
-		// Valida operações
+		// TODO Valida operações
 
 		// TODO Auto-generated method stub
 		System.out.println("não implementado");

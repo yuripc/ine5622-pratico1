@@ -25,13 +25,13 @@ public class Main {
 	private JMenuItem mntmComplemento;
 	private JMenuItem mntmA1Determinizar;
 	private JMenuItem mntmA1Minimizar;
-	private JMenuItem mntmA1Reconhecer;
+	private JMenuItem mntmA1ReconhecerSentenca;
 	private JMenuItem mntmA1GerarSentencas;
 	private JMenuItem mntmA1Converter;
 	private JMenuItem mntmA2Determinizar;
 	private JMenuItem mntmA2Minimizar;
 	private JMenuItem mntmA2GerarSentencas;
-	private JMenuItem mntmA2Reconhecer;
+	private JMenuItem mntmA2ReconhecerSentenca;
 	private JMenuItem mntmA2Converter;
 	private JMenuItem mntmNovo;
 
@@ -140,8 +140,8 @@ public class Main {
 		JSeparator SepA12 = new JSeparator();
 		mnA1.add(SepA12);
 
-		mntmA1Reconhecer = new JMenuItem("Reconhecer Senten\u00E7a");
-		mnA1.add(mntmA1Reconhecer);
+		mntmA1ReconhecerSentenca = new JMenuItem("Reconhecer Senten\u00E7a");
+		mnA1.add(mntmA1ReconhecerSentenca);
 
 		mntmA1GerarSentencas = new JMenuItem("Senten\u00E7as Reconhecidas");
 		mnA1.add(mntmA1GerarSentencas);
@@ -176,8 +176,8 @@ public class Main {
 		JSeparator SepA22 = new JSeparator();
 		mnA2.add(SepA22);
 
-		mntmA2Reconhecer = new JMenuItem("Reconhecer Senten\u00E7a");
-		mnA2.add(mntmA2Reconhecer);
+		mntmA2ReconhecerSentenca = new JMenuItem("Reconhecer Senten\u00E7a");
+		mnA2.add(mntmA2ReconhecerSentenca);
 
 		mntmA2GerarSentencas = new JMenuItem("Senten\u00E7as Reconhecidas");
 		mnA2.add(mntmA2GerarSentencas);
@@ -210,15 +210,39 @@ public class Main {
 		mntmAbrir.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
+				JPanel[] panels;
+
+				boolean erroEsquerda = false;
+				boolean erroDireita = false;
+
 				try {
-					JPanel[] panels = arquivo.abrir();
-					addComponent(true, panels[0]);
-					addComponent(false, panels[1]);
+					panels = arquivo.abrir();
+
+					try {
+						addComponent(true, panels[0]);
+						erroEsquerda = false;
+					} catch (Exception e1) {
+					}
+
+					try {
+						addComponent(false, panels[1]);
+						erroDireita = false;
+					} catch (Exception e1) {
+					}
+
+					if (erroEsquerda || erroDireita) {
+						if (erroEsquerda && erroDireita) {
+							messageError("Os dois elementos léxicos estão corrompidos e não puderam ser lidos");
+						} else if (erroEsquerda) {
+							messageError("O elemento léxico da esquerda está corrompido e não pôde ser lido");
+						} else {
+							messageError("O elemento léxico da direita está corrompido e não pôde ser lido");
+						}
+					}
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					messageError("Arquivo está corrompido e não pôde ser lido");
 				}
+
 			}
 		});
 
@@ -228,8 +252,8 @@ public class Main {
 				try {
 					arquivo.salvar(getPanels());
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					messageError("O arquivo não pode ser salvo");
 				}
 			}
 		});
@@ -240,8 +264,8 @@ public class Main {
 				try {
 					arquivo.salvarComo(getPanels());
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					messageError("O arquivo não pode ser salvo");
 				}
 			}
 		});
@@ -261,6 +285,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				// TODO
 				System.out.println("Ação não configurada");
+
 			}
 		});
 
@@ -296,32 +321,34 @@ public class Main {
 		mntmA1Determinizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
+				controle.ElemLex elem = criarElem(true);
+				if (elem != null) {
+					elem.determinizar();
+				}
 			}
 		});
 
 		mntmA1Minimizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
+				controle.ElemLex elem = criarElem(true);
+				if (elem != null) {
+					elem.minimizar();
+				}
 			}
 		});
 
-		mntmA1Reconhecer.addActionListener(new ActionListener() {
+		mntmA1ReconhecerSentenca.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
+				reconhecerSentenca(true);
 			}
 		});
 
 		mntmA1GerarSentencas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
+				gerarSentenca(true);
 			}
 		});
 
@@ -333,49 +360,37 @@ public class Main {
 			}
 		});
 
-		mntmA2NovoAutomato.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				addComponent(false, new ElemLexAutomato());
-			}
-		});
-
-		mntmA2NovoGR.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				addComponent(false, new ElemLexGR());
-			}
-		});
-
 		mntmA2Determinizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
+				controle.ElemLex elem = criarElem(false);
+				if (elem != null) {
+					elem.determinizar();
+				}
 			}
 		});
 
 		mntmA2Minimizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
+				controle.ElemLex elem = criarElem(false);
+				if (elem != null) {
+					elem.minimizar();
+				}
 			}
 		});
 
-		mntmA2Reconhecer.addActionListener(new ActionListener() {
+		mntmA2ReconhecerSentenca.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
+				reconhecerSentenca(false);
 			}
 		});
 
 		mntmA2GerarSentencas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
+				gerarSentenca(false);
 			}
 		});
 
@@ -395,7 +410,7 @@ public class Main {
 
 			mntmA1Determinizar.setEnabled(habilitarMenuElemento);
 			mntmA1Minimizar.setEnabled(habilitarMenuElemento);
-			mntmA1Reconhecer.setEnabled(habilitarMenuElemento);
+			mntmA1ReconhecerSentenca.setEnabled(habilitarMenuElemento);
 			mntmA1GerarSentencas.setEnabled(habilitarMenuElemento);
 			mntmA1Converter.setEnabled(habilitarMenuElemento);
 
@@ -412,7 +427,7 @@ public class Main {
 
 			mntmA2Determinizar.setEnabled(habilitarMenuElemento);
 			mntmA2Minimizar.setEnabled(habilitarMenuElemento);
-			mntmA2Reconhecer.setEnabled(habilitarMenuElemento);
+			mntmA2ReconhecerSentenca.setEnabled(habilitarMenuElemento);
 			mntmA2GerarSentencas.setEnabled(habilitarMenuElemento);
 			mntmA2Converter.setEnabled(habilitarMenuElemento);
 			if (component instanceof ElemLexAutomato) {
@@ -433,6 +448,74 @@ public class Main {
 		mntmUniao.setEnabled(habilitarMenuAcao);
 		mntmComplemento.setEnabled(habilitarMenuAcao);
 
+	}
+
+	private controle.ElemLex criarElem(boolean esquerda) {
+		try {
+			JPanel panel;
+			if (esquerda) {
+				panel = (JPanel) splitPane.getLeftComponent();
+			} else {
+				panel = (JPanel) splitPane.getRightComponent();
+			}
+			if (panel instanceof ElemLexAutomato) {
+				return new controle.ElemLexAutomato(panel.toString());
+			} else {
+				return new controle.ElemLexGR(panel.toString());
+			}
+		} catch (Exception e) {
+			String pos;
+			if (esquerda) {
+				pos = "esquerda";
+			} else {
+				pos = "direita";
+			}
+			messageError("Elemento da " + pos + " não é válido:\n" + e.getMessage() + "\nConsulte a 'Ajuda' para mais informações para resolver o problema");
+			return null;
+		}
+	}
+
+	public static String dialogInput(String mensagem) {
+		return JOptionPane.showInputDialog(null, mensagem).trim();
+	}
+
+	public static void messageInformation(String mensagem) {
+		JOptionPane.showMessageDialog(null, mensagem, "", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public static void messageError(String mensagem) {
+		JOptionPane.showMessageDialog(null, mensagem, "", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private void reconhecerSentenca(boolean esquerda) {
+		controle.ElemLex elem = criarElem(true);
+		if (elem != null) {
+			String input = dialogInput("Qual sentença deseja verificar?");
+
+			if (elem.reconhecerSentenca(input)) {
+				messageInformation("Sentença faz parte da linguagem!");
+			} else {
+				messageError("Sentença não faz parte da linguagem!");
+			}
+		}
+	}
+
+	private void gerarSentenca(boolean esquerda) {
+		controle.ElemLex elem = criarElem(esquerda);
+		if (elem != null) {
+			int input = Integer.parseInt(dialogInput("Qual o tamanho das sentença?"));
+
+			String[] sentencas = elem.gerarSentencas(input);
+			if (sentencas.length == 0) {
+				messageError("Não existe sentença com esse tamanho");
+			} else {
+				String s = "Sentenças de tamanho " + input + ": " + sentencas.length + "\n";
+				for (int i = 0; i < sentencas.length; i++) {
+					s += "• " + sentencas[i] + "\n";
+				}
+				messageInformation(s);
+			}
+		}
 	}
 
 	private JPanel[] getPanels() {
