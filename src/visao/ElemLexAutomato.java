@@ -236,7 +236,7 @@ public class ElemLexAutomato extends ElemLex {
 		tabela.add(component, gbc);
 
 		mapa.put(new Point(coluna, linha), component);
-
+		this.revalidate();
 	}
 
 }

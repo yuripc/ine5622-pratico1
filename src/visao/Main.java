@@ -360,6 +360,20 @@ public class Main {
 			}
 		});
 
+		mntmA2NovoAutomato.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				addComponent(false, new ElemLexAutomato());
+			}
+		});
+
+		mntmA2NovoGR.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				addComponent(false, new ElemLexGR());
+			}
+		});
+
 		mntmA2Determinizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
