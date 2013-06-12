@@ -12,17 +12,20 @@ public class CelulaCabecalho extends Celula {
 
 	private JTextField textField;
 
+	private static final Dimension dimension = new Dimension(30, 20);
+	private static final LineBorder border = new LineBorder(Color.BLACK);
+
 	public CelulaCabecalho() {
 		// TODO Auto-generated method stub
 		super();
 
 		textField = new JTextField();
-		textField.setPreferredSize(new Dimension(30, 20));
-		textField.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textField.setPreferredSize(dimension);
+		textField.setBorder(border);
 		textField.setHorizontalAlignment(JTextField.CENTER);
+		textField.setDisabledTextColor(Color.BLACK);
 
 		this.add(textField, BorderLayout.CENTER);
-
 	}
 
 	public CelulaCabecalho(String s) {
@@ -45,6 +48,11 @@ public class CelulaCabecalho extends Celula {
 			s = "";
 		}
 		textField.setText(s);
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		textField.setEnabled(enabled);
 	}
 
 }

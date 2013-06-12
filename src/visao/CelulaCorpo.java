@@ -9,12 +9,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
-public class CelulaCorpo extends Celula{
+public class CelulaCorpo extends Celula {
 	private static final long serialVersionUID = 1L;
 
 	private JTextArea textArea;
 
-	public CelulaCorpo(){
+	private static final Dimension dimension = new Dimension(60, 45);
+	private static final LineBorder border = new LineBorder(Color.BLACK);
+
+	public CelulaCorpo() {
 		// TODO Auto-generated method stub
 		super();
 
@@ -22,19 +25,21 @@ public class CelulaCorpo extends Celula{
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(false);
 		textArea.setMargin(new Insets(5, 5, 5, 5));
+		textArea.setDisabledTextColor(Color.BLACK);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportView(textArea);
-		scrollPane.setPreferredSize(new Dimension(60, 45));
-		scrollPane.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane.setPreferredSize(dimension);
+		scrollPane.setBorder(border);
 
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
 
-	public CelulaCorpo(String s){
+	public CelulaCorpo(String s) {
 		this();
 		setText(s);
 	}
+
 	@Override
 	public String getText() {
 		if (textArea.getText().equals("")) {
@@ -50,6 +55,11 @@ public class CelulaCorpo extends Celula{
 			s = "";
 		}
 		textArea.setText(s);
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		textArea.setEnabled(enabled);
 	}
 
 }

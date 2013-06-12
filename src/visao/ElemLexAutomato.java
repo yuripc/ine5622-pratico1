@@ -1,7 +1,7 @@
 package visao;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -9,6 +9,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -23,7 +24,8 @@ public class ElemLexAutomato extends ElemLex {
 	private static final Insets insets = new Insets(0, 0, 0, 0);
 	private int linhas;
 	private int colunas;
-	private LinkedHashMap<Point, Component> mapa;
+	private LinkedHashMap<Point, Celula> mapa;
+	private JPanel bottomPanel;
 
 	public ElemLexAutomato() {
 		super();
@@ -49,7 +51,7 @@ public class ElemLexAutomato extends ElemLex {
 		scrollPane.setViewportView(tabela);
 		tabela.setLayout(new GridBagLayout());
 
-		JPanel bottomPanel = new JPanel();
+		bottomPanel = new JPanel();
 		add(bottomPanel, BorderLayout.SOUTH);
 
 		JPanel panel_1 = new JPanel();
@@ -153,26 +155,37 @@ public class ElemLexAutomato extends ElemLex {
 		gbc_btnNewButton_3.gridy = 1;
 		panel_4.add(btnNewButton_3, gbc_btnNewButton_3);
 
-		mapa = new LinkedHashMap<Point, Component>();
+		mapa = new LinkedHashMap<Point, Celula>();
+	}
+
+	@Override
+	public void habilitarEdicao(boolean habilitar) {
+		// TODO Auto-generated method stub
+		bottomPanel.setVisible(habilitar);
+		for(Entry<Point, Celula> entrada : mapa.entrySet()){
+			Celula celula = entrada.getValue();
+			celula.setEnabled(false);
+		}
+		tabela.setEnabled(habilitar);
 	}
 
 	@Override
 	public String toString() {
-		String s = "";
+		StringBuilder sb = new StringBuilder();
 		for (int y = 0; y < linhas; y++) {
 			for (int x = 0; x < colunas; x++) {
 
 				if (!(y == 0 && x <= 1)) {
-					s += ((Celula) mapa.get(new Point(x, y))).getText();
+					sb.append(mapa.get(new Point(x, y)).getText());
 				} else {
-					s += " ";
+					sb.append(" ");
 				}
 
-				s += "\t";
+				sb.append("\t");
 			}
-			s += "\n";
+			sb.append("\n");
 		}
-		return s;
+		return sb.toString();
 	}
 
 	@Override
@@ -204,6 +217,8 @@ public class ElemLexAutomato extends ElemLex {
 
 		linhas = 2;
 		colunas = 3;
+
+		tabela.setPreferredSize(new Dimension(100,100));
 	}
 
 	private void addColumn() {
@@ -225,7 +240,7 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	private void addComponent(String s, int coluna, int linha) {
-		JPanel component;
+		Celula component;
 		if (coluna <= 1 || linha == 0) {
 			component = new CelulaCabecalho(s);
 		} else {
@@ -238,5 +253,6 @@ public class ElemLexAutomato extends ElemLex {
 		mapa.put(new Point(coluna, linha), component);
 		this.revalidate();
 	}
+
 
 }

@@ -16,5 +16,6 @@ public abstract class Celula extends JPanel{
 
 	public abstract String getText();
 	public abstract void setText(String s);
-
+	@Override
+	public abstract void setEnabled(boolean enabled);
 }

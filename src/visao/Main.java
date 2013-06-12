@@ -18,22 +18,22 @@ import javax.swing.JSplitPane;
 
 public class Main {
 
-	private JFrame frame;
-	private JSplitPane splitPane;
-	private controle.Arquivo arquivo = new controle.Arquivo();
-	private JMenuItem mntmUniao;
-	private JMenuItem mntmComplemento;
-	private JMenuItem mntmA1Determinizar;
-	private JMenuItem mntmA1Minimizar;
-	private JMenuItem mntmA1ReconhecerSentenca;
-	private JMenuItem mntmA1GerarSentencas;
-	private JMenuItem mntmA1Converter;
-	private JMenuItem mntmA2Determinizar;
-	private JMenuItem mntmA2Minimizar;
-	private JMenuItem mntmA2GerarSentencas;
-	private JMenuItem mntmA2ReconhecerSentenca;
-	private JMenuItem mntmA2Converter;
-	private JMenuItem mntmNovo;
+	private static JFrame frame;
+	private static JSplitPane splitPane;
+	private static controle.Arquivo arquivo = new controle.Arquivo();
+	private static JMenuItem mntmUniao;
+	private static JMenuItem mntmComplemento;
+	private static JMenuItem mntmA1Determinizar;
+	private static JMenuItem mntmA1Minimizar;
+	private static JMenuItem mntmA1ReconhecerSentenca;
+	private static JMenuItem mntmA1GerarSentencas;
+	private static JMenuItem mntmA1Converter;
+	private static JMenuItem mntmA2Determinizar;
+	private static JMenuItem mntmA2Minimizar;
+	private static JMenuItem mntmA2GerarSentencas;
+	private static JMenuItem mntmA2ReconhecerSentenca;
+	private static JMenuItem mntmA2Converter;
+	private static JMenuItem mntmNovo;
 
 	/**
 	 * Launch the application.
@@ -261,12 +261,7 @@ public class Main {
 		mntmSalvarComo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					arquivo.salvarComo(getPanels());
-				} catch (IOException e1) {
-					e1.printStackTrace();
-					messageError("O arquivo não pode ser salvo");
-				}
+				salvarComo(getPanels());
 			}
 		});
 
@@ -323,7 +318,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				controle.ElemLex elem = criarElem(true);
 				if (elem != null) {
-					elem.determinizar();
+					new Operacoes(elem.determinizar());
 				}
 			}
 		});
@@ -417,7 +412,7 @@ public class Main {
 		});
 	}
 
-	private void addComponent(boolean isLeft, JPanel component) {
+	public static void addComponent(boolean isLeft, JPanel component) {
 		boolean habilitarMenuElemento = component instanceof ElemLex;
 		if (isLeft) {
 			splitPane.setLeftComponent(component);
@@ -464,7 +459,7 @@ public class Main {
 
 	}
 
-	private controle.ElemLex criarElem(boolean esquerda) {
+	private static controle.ElemLex criarElem(boolean esquerda) {
 		try {
 			JPanel panel;
 			if (esquerda) {
@@ -484,7 +479,7 @@ public class Main {
 			} else {
 				pos = "direita";
 			}
-			messageError("Elemento da " + pos + " não é válido:\n" + e.getMessage() + "\nConsulte a 'Ajuda' para mais informações para resolver o problema");
+			messageError("Elemento da " + pos + " não é válido:\n" + e.getMessage() + "\nConsulte a 'Ajuda' para obter mais informações");
 			return null;
 		}
 	}
@@ -501,7 +496,7 @@ public class Main {
 		JOptionPane.showMessageDialog(null, mensagem, "", JOptionPane.ERROR_MESSAGE);
 	}
 
-	private void reconhecerSentenca(boolean esquerda) {
+	private static void reconhecerSentenca(boolean esquerda) {
 		controle.ElemLex elem = criarElem(true);
 		if (elem != null) {
 			String input = dialogInput("Qual sentença deseja verificar?");
@@ -514,7 +509,7 @@ public class Main {
 		}
 	}
 
-	private void gerarSentenca(boolean esquerda) {
+	private static void gerarSentenca(boolean esquerda) {
 		controle.ElemLex elem = criarElem(esquerda);
 		if (elem != null) {
 			int input = Integer.parseInt(dialogInput("Qual o tamanho das sentença?"));
@@ -532,8 +527,16 @@ public class Main {
 		}
 	}
 
-	private JPanel[] getPanels() {
+	private static JPanel[] getPanels() {
 		return new JPanel[] { (JPanel) splitPane.getLeftComponent(), (JPanel) splitPane.getRightComponent() };
 	}
 
+	public static void salvarComo(JPanel[] panels){
+		try {
+			arquivo.salvarComo(panels);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			messageError("O arquivo não pode ser salvo");
+		}
+	}
 }

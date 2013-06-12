@@ -10,7 +10,12 @@ public class ElemLexGR extends ElemLex {
 
 	@Override
 	public ElemLexGR toGR() {
-		return this;
+		try {
+			return (ElemLexGR) this.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override

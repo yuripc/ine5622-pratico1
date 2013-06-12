@@ -148,13 +148,15 @@ public class Arquivo {
 		for (int i = 0; i <= 1; i++) {
 			String entrada = elementos[i + 1];
 			String tipoPanel = entrada.substring(0, entrada.indexOf("\n"));
-			String elemento = entrada.substring(entrada.indexOf("\n") + 1, entrada.lastIndexOf('\n'));
-			if (tipoPanel.equals("Automato")) {
-				paneis[i] = new visao.ElemLexAutomato(elemento);
-			} else if (tipoPanel.equals("GR")) {
-				paneis[i] = new visao.ElemLexGR(elemento);
-			} else {
+			if (tipoPanel.equals("null")) {
 				paneis[i] = new JPanel();
+			} else {
+				String elemento = entrada.substring(entrada.indexOf("\n") + 1, entrada.lastIndexOf('\n'));
+				if (tipoPanel.equals("Automato")) {
+					paneis[i] = new visao.ElemLexAutomato(elemento);
+				} else if (tipoPanel.equals("GR")) {
+					paneis[i] = new visao.ElemLexGR(elemento);
+				}
 			}
 		}
 		return paneis;

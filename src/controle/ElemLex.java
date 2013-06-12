@@ -1,72 +1,27 @@
 package controle;
 
-import java.util.Arrays;
 import java.util.Vector;
 
-public abstract class ElemLex {
+public abstract class ElemLex implements Cloneable {
 
 	Vector<Character> alfabeto;
 	Vector<String> estados;
 	String estadoInicial;
 	Vector<String> estadosFinais;
 	Vector<Vector<String>> operacoes;
+	String input;
 
-	public ElemLex determinizar() {
+	public Vector<Operacao> determinizar() {
 		ElemLexAutomato elem = toAutomato();
 
-		Vector<String> producoes = new Vector<String>();
+		elem.determinizarAutomato();
 
-		boolean isFinal = false;
-
-		Vector<String> estadosPendentes = new Vector<String>();
-		estadosPendentes.add(elem.estadoInicial);
-		while (estadosPendentes.size() > 0) {
-			String estado = estadosPendentes.get(0);
-			// Loop para cada entrada possivel
-			for (char entrada : elem.alfabeto) {
-				String proximoEstado = "";
-				// Loop para cada letra do estado global
-				for (char estadoSub : estado.toCharArray()) {
-					String[] proximosEstadosSub = elem.proximoEstado(estadoSub, entrada);
-					for (String proximoEstadoSub : proximosEstadosSub) {
-						if (!proximoEstado.contains(proximoEstadoSub) && !proximoEstadoSub.equals("&")) {
-							proximoEstado += proximoEstadoSub;
-						}
-					}
-
-					if (!isFinal && elem.estadosFinais.contains(estadoSub)) {
-						isFinal = true;
-					}
-				}
-
-				if (proximoEstado.length() == 0) {
-					proximoEstado = "&";
-				} else if (proximoEstado.length() > 1) {
-					char[] caracteres = proximoEstado.toCharArray();
-					Arrays.sort(caracteres);
-					proximoEstado = new String(caracteres);
-				}
-
-				if (!estadosPendentes.contains(proximoEstado) && !elem.estados.contains(proximoEstado)) {
-					estadosPendentes.add(proximoEstado);
-				}
-
-				producoes.add(proximoEstado);
-			}
-
-			elem.estados.add(estado);
-			if (isFinal) {
-				elem.estadosFinais.add(estado);
-			}
-			elem.operacoes.add(producoes);
-
-			estadosPendentes.remove(estado);
-		}
-
-		return returnToOrigin(elem);
+		Vector<Operacao> operacoes = new Vector<Operacao>();
+		operacoes.add(new Operacao("Determinimização",returnToOrigin(elem),true));
+		return operacoes;
 	}
 
-	public ElemLex minimizar() {
+	public Vector<Operacao> minimizar() {
 		ElemLexAutomato elem = this.toAutomato();
 		// TODO Auto-generated method stub
 		System.out.println("não implementado");
@@ -97,21 +52,6 @@ public abstract class ElemLex {
 		return null;
 	}
 
-	protected String[] proximoEstado(String estadoAtual, char entrada) {
-		try {
-			Vector<String> linhaTransicoes = operacoes.get(estados.indexOf(estadoAtual));
-			return linhaTransicoes.get(alfabeto.indexOf(entrada)).split(",");
-		} catch (ArrayIndexOutOfBoundsException e) {
-			return new String[] { "&" };
-		}
-	}
-
-	protected String[] proximoEstado(char estadoAtual, char entrada) {
-		// TODO Auto-generated method stub
-		System.out.println("não implementado");
-		return null;
-	}
-
 	protected ElemLex returnToOrigin(ElemLex elemGerado) {
 		if (this instanceof ElemLexAutomato) {
 			return elemGerado.toAutomato();
@@ -123,5 +63,4 @@ public abstract class ElemLex {
 	public abstract ElemLexGR toGR();
 
 	public abstract ElemLexAutomato toAutomato();
-
 }

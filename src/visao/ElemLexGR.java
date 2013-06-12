@@ -40,4 +40,9 @@ public class ElemLexGR extends ElemLex {
 	protected void loadString(String s) throws Exception {
 		textArea.setText(s);
 	}
+
+	@Override
+	public void habilitarEdicao(boolean habilitar) {
+		textArea.setEnabled(habilitar);
+	}
 }
