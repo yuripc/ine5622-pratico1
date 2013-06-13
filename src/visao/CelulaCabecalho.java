@@ -30,7 +30,11 @@ public class CelulaCabecalho extends Celula {
 
 	public CelulaCabecalho(String s) {
 		this();
-		setText(s);
+		if (s == null) {
+			setEnabled(false);
+		} else {
+			setText(s);
+		}
 	}
 
 	@Override

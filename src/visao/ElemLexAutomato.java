@@ -1,15 +1,12 @@
 package visao;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -24,7 +21,7 @@ public class ElemLexAutomato extends ElemLex {
 	private static final Insets insets = new Insets(0, 0, 0, 0);
 	private int linhas;
 	private int colunas;
-	private LinkedHashMap<Point, Celula> mapa;
+	private Vector<Vector<Celula>> mapa2;
 	private JPanel bottomPanel;
 
 	public ElemLexAutomato() {
@@ -155,28 +152,35 @@ public class ElemLexAutomato extends ElemLex {
 		gbc_btnNewButton_3.gridy = 1;
 		panel_4.add(btnNewButton_3, gbc_btnNewButton_3);
 
-		mapa = new LinkedHashMap<Point, Celula>();
+		mapa2 = new Vector<Vector<Celula>>();
+
+		addComponent(null, 0, 0);
+		addComponent(null, 0, 1);
 	}
 
 	@Override
 	public void habilitarEdicao(boolean habilitar) {
-		// TODO Auto-generated method stub
-		bottomPanel.setVisible(habilitar);
-		for(Entry<Point, Celula> entrada : mapa.entrySet()){
-			Celula celula = entrada.getValue();
-			celula.setEnabled(false);
+		for (int linha = 0; linha < linhas; linha++) {
+			for (int coluna = 0; coluna < colunas; coluna++) {
+				Celula celula = mapa2.get(linha).get(coluna);
+				if (celula != null) {
+					celula.setEnabled(false);
+				}
+			}
 		}
+
 		tabela.setEnabled(habilitar);
+		bottomPanel.setVisible(habilitar);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (int y = 0; y < linhas; y++) {
-			for (int x = 0; x < colunas; x++) {
+		for (int linha = 0; linha < linhas; linha++) {
+			for (int coluna = 0; coluna < colunas; coluna++) {
 
-				if (!(y == 0 && x <= 1)) {
-					sb.append(mapa.get(new Point(x, y)).getText());
+				if (!(linha == 0 && coluna <= 1)) {
+					sb.append(mapa2.get(linha).get(coluna).getText());
 				} else {
 					sb.append(" ");
 				}
@@ -204,55 +208,57 @@ public class ElemLexAutomato extends ElemLex {
 				coluna = 2;
 			}
 			for (; coluna < colunas; coluna++) {
-				addComponent(sColunas[coluna], coluna, linha);
+				addComponent(sColunas[coluna], linha, coluna);
 			}
 		}
 	}
 
 	protected void initialConfig() {
-		addComponent(2, 0);
-		addComponent(0, 1);
-		addComponent(1, 1);
-		addComponent(2, 1);
+		linhas = 1;
+		colunas = 2;
 
-		linhas = 2;
-		colunas = 3;
-
-		tabela.setPreferredSize(new Dimension(100,100));
+		addLine();
+		addColumn();
 	}
 
 	private void addColumn() {
 		for (int i = 0; i < linhas; i++) {
-			addComponent(colunas, i);
+			addComponent(i, colunas);
 		}
 		colunas++;
 	}
 
 	private void addLine() {
+		mapa2.add(new Vector<Celula>());
 		for (int i = 0; i < colunas; i++) {
-			addComponent(i, linhas);
+			addComponent(linhas, i);
 		}
 		linhas++;
 	}
 
-	private void addComponent(int coluna, int linha) {
-		addComponent("", coluna, linha);
+	private void addComponent(int linha, int coluna) {
+		addComponent("", linha, coluna);
 	}
 
-	private void addComponent(String s, int coluna, int linha) {
-		Celula component;
+	private void addComponent(String s, int linha, int coluna) {
+		Celula componente;
 		if (coluna <= 1 || linha == 0) {
-			component = new CelulaCabecalho(s);
+			componente = new CelulaCabecalho(s);
 		} else {
-			component = new CelulaCorpo(s);
+			componente = new CelulaCorpo(s);
 		}
 
 		GridBagConstraints gbc = new GridBagConstraints(coluna, linha, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, insets, 0, 0);
-		tabela.add(component, gbc);
+		tabela.add(componente, gbc);
 
-		mapa.put(new Point(coluna, linha), component);
+		try {
+			mapa2.get(linha);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			mapa2.add(new Vector<Celula>());
+		} finally {
+			mapa2.get(linha).add(componente);
+		}
 		this.revalidate();
 	}
-
 
 }

@@ -23,10 +23,15 @@ public class Operacao extends JPanel {
 	public Operacao(controle.Operacao operacao) throws Exception {
 		if (operacao.getElemLex() instanceof controle.ElemLexAutomato) {
 			elemento = new visao.ElemLexAutomato(operacao.getElemLex().toString());
+
 		} else {
 			elemento = new visao.ElemLexGR(operacao.getElemLex().toString());
 		}
-		elemento.habilitarEdicao(false);
+		try {
+			elemento.habilitarEdicao(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		setLayout(new BorderLayout(0, 0));
 
 		nome = new JLabel("Descricao");

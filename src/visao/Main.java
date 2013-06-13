@@ -222,12 +222,14 @@ public class Main {
 						addComponent(true, panels[0]);
 						erroEsquerda = false;
 					} catch (Exception e1) {
+						e1.printStackTrace();
 					}
 
 					try {
 						addComponent(false, panels[1]);
 						erroDireita = false;
 					} catch (Exception e1) {
+						e1.printStackTrace();
 					}
 
 					if (erroEsquerda || erroDireita) {
@@ -480,6 +482,7 @@ public class Main {
 				pos = "direita";
 			}
 			messageError("Elemento da " + pos + " não é válido:\n" + e.getMessage() + "\nConsulte a 'Ajuda' para obter mais informações");
+			e.printStackTrace();
 			return null;
 		}
 	}
