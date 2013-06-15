@@ -1,12 +1,15 @@
 package controle;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
 
 public class ElemLexAutomato extends ElemLex {
+
+	protected final String separador = ",";
+	protected final String epsilon = "&";
 
 	protected ElemLexAutomato(Vector<Character> alfabeto, String estadoInicial) {
 		this.alfabeto = alfabeto;
@@ -95,15 +98,32 @@ public class ElemLexAutomato extends ElemLex {
 		for (int linha = 1; linha < tabela.length; linha++) {
 			operacoes.add(new Vector<String>());
 			for (int coluna = 2; coluna < tabela[0].length; coluna++) {
-				String transicao = tabela[linha][coluna];
+				String[] transicoes = tabela[linha][coluna].split(separador);
 
-				if (transicao.equals("") || transicao.equals("-")) {
-					transicao = "&";
-				} else if (!estados.contains(transicao)) {
-					throw new Exception("Estado " + transicao + " n‹o definido - linha " + linha + " coluna " + coluna);
+				Vector<String> transicoesValidas = new Vector<String>();
+
+				for (String transicao : transicoes) {
+					if (estados.contains(transicao)) {
+						if (!transicoesValidas.contains(transicao)) {
+							transicoesValidas.add(transicao);
+						}
+					} else if (!(transicao.matches("^[-&]$") || !transicao.isEmpty())) {
+						throw new Exception("Estado " + transicao + " n‹o definido - linha " + linha + " coluna " + coluna);
+					}
 				}
 
-				operacoes.get(linha - 1).add(transicao);
+				StringBuilder transicao = new StringBuilder();
+				if (transicoesValidas.isEmpty()) {
+					transicao.append(epsilon);
+				} else {
+					for (String transicaoValida : transicoesValidas) {
+						transicao.append(transicaoValida + separador);
+					}
+
+					transicao.deleteCharAt(transicao.length() - 1);
+				}
+
+				operacoes.get(linha - 1).add(transicao.toString());
 			}
 		}
 
@@ -111,39 +131,40 @@ public class ElemLexAutomato extends ElemLex {
 
 	protected void determinizarAutomato() {
 
-		Vector<String[]> estadosPendentes = new Vector<String[]>();
+		Vector<String> estadosPendentes = new Vector<String>();
 
-		for (char entrada : alfabeto) {
-			for (String estado : estados) {
-				String[] proximoEstado = proximoEstadoDeterminizado(estado, entrada);
-				if (!estados.contains(proximoEstado[0])) {
-					estadosPendentes.add(proximoEstado);
+		for (String estado : estados) {
+			for (char entrada : alfabeto) {
+				String proxEstado = proximoEstado(estado, entrada);
+
+				if (!estados.contains(proxEstado) && !estadosPendentes.contains(proxEstado) && !proxEstado.equals(epsilon)) {
+					estadosPendentes.add(proxEstado);
 				}
-				setOperacao(estado, entrada, proximoEstado[0]);
+				setOperacao(estado, entrada, normalizarEstado(proxEstado));
 			}
 		}
 
 		while (estadosPendentes.size() > 0) {
-			String estado = estadosPendentes.get(0)[0];
-			String estadoNaoDeterminizado = estadosPendentes.get(0)[1];
+			String estado = normalizarEstado(estadosPendentes.get(0));
+			String estadoNaoDeterminizado = estadosPendentes.get(0);
 
 			estados.add(estado);
 			operacoes.add(new Vector<String>());
 
 			for (char entrada : alfabeto) {
-				String[] proxEstado = proximoEstadoDeterminizado(estadoNaoDeterminizado, entrada);
+				String proxEstado = proximoEstado(estadoNaoDeterminizado, entrada);
 
-				if (!estados.contains(proxEstado[0]) && !estadosPendentes.contains(proxEstado)) {
+				if (!estados.contains(proxEstado) && !estadosPendentes.contains(proxEstado) && !proxEstado.equals(epsilon)) {
 					estadosPendentes.add(proxEstado);
 				}
 
-				setOperacao(estado, entrada, proxEstado[0]);
+				setOperacao(estado, entrada, normalizarEstado(proxEstado));
 			}
 
 			boolean estadoFinal = false;
-			String[] subEstados = estadoNaoDeterminizado.split(",");
+			String[] subEstados = estadoNaoDeterminizado.split(separador);
 
-			for (int i = 0; i < subEstados.length || estadoFinal; i++) {
+			for (int i = 0; i < subEstados.length && !estadoFinal; i++) {
 				if (estadosFinais.contains(subEstados[i])) {
 					estadosFinais.add(estado);
 					estadoFinal = true;
@@ -155,51 +176,46 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	protected String proximoEstado(String estado, char entrada) {
-		int linha = estados.indexOf(estado);
-		int coluna = alfabeto.indexOf(entrada);
-		return operacoes.get(linha).get(coluna);
-	}
-
-	protected String[] proximoEstadoDeterminizado(String estado, char entrada) {
 		Vector<String> proximosEstados = new Vector<String>();
 
 		// Adiciona cada transicao de cada sub estado a proximosEstados
-		for (String subEstado : estado.split(",")) {
-			String proxEstado = proximoEstado(subEstado, entrada);
-			for (String subProxEstado : proxEstado.split(",")) {
-				if (!subProxEstado.equals("&") && !proximosEstados.contains(subProxEstado)) {
-					proximosEstados.add(subProxEstado);
+		for (String subEstado : estado.split(separador)) {
+			if (!subEstado.equals(epsilon)) {
+				int linha = estados.indexOf(subEstado);
+				int coluna = alfabeto.indexOf(entrada);
+				String proxEstado = operacoes.get(linha).get(coluna);
+
+				for (String subProxEstado : proxEstado.split(separador)) {
+					if (!subProxEstado.equals(epsilon) && !proximosEstados.contains(subProxEstado)) {
+						proximosEstados.add(subProxEstado);
+					}
 				}
 			}
 		}
 
 		if (proximosEstados.size() == 0) {
-			proximosEstados.add("&");
+			proximosEstados.add(epsilon);
 		} else {
-			Collections.sort(proximosEstados);
+			removerDuplicatas(proximosEstados);
 		}
 
-		return new String[] { normalizarEstado(proximosEstados), StringUtils.join(proximosEstados, ",") };
-	}
-
-	protected String normalizarEstado(Vector<String> s) {
-		Collections.sort(s);
-		return normalizarEstado(StringUtils.join(s, ""));
-	}
-
-	protected String normalizarEstado(String[] s) {
-		Arrays.sort(s);
-		return normalizarEstado(StringUtils.join(s, ""));
+		return StringUtils.join(proximosEstados, separador);
 	}
 
 	protected String normalizarEstado(String s) {
-		return StringUtils.capitalize(s.toLowerCase());
+		return StringUtils.capitalize(s.toLowerCase()).replace(separador, "");
 	}
 
 	protected void setOperacao(String estado, char entrada, String proximoEstado) {
 		int linha = estados.indexOf(estado);
 		int coluna = alfabeto.indexOf(entrada);
-		operacoes.get(linha).set(coluna, proximoEstado);
+		if (operacoes.get(linha).size() > coluna) {
+			operacoes.get(linha).set(coluna, proximoEstado);
+		} else if (operacoes.get(linha).size() == coluna) {
+			operacoes.get(linha).add(proximoEstado);
+		} else {
+			throw new ArrayIndexOutOfBoundsException();
+		}
 	}
 
 	@Override
@@ -252,5 +268,13 @@ public class ElemLexAutomato extends ElemLex {
 		}
 
 		return sb.toString();
+	}
+
+	protected void removerDuplicatas(Vector<String> vetor) {
+		HashSet<String> hs = new HashSet<String>();
+		hs.addAll(vetor);
+		vetor.clear();
+		vetor.addAll(hs);
+		Collections.sort(vetor);
 	}
 }
