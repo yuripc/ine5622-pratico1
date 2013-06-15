@@ -21,7 +21,7 @@ public class ElemLexAutomato extends ElemLex {
 	private static final Insets insets = new Insets(0, 0, 0, 0);
 	private int linhas;
 	private int colunas;
-	private Vector<Vector<Celula>> mapa2;
+	private Vector<Vector<Celula>> mapa;
 	private JPanel bottomPanel;
 
 	public ElemLexAutomato() {
@@ -152,7 +152,7 @@ public class ElemLexAutomato extends ElemLex {
 		gbc_btnNewButton_3.gridy = 1;
 		panel_4.add(btnNewButton_3, gbc_btnNewButton_3);
 
-		mapa2 = new Vector<Vector<Celula>>();
+		mapa = new Vector<Vector<Celula>>();
 
 		addComponent(null, 0, 0);
 		addComponent(null, 0, 1);
@@ -162,7 +162,7 @@ public class ElemLexAutomato extends ElemLex {
 	public void habilitarEdicao(boolean habilitar) {
 		for (int linha = 0; linha < linhas; linha++) {
 			for (int coluna = 0; coluna < colunas; coluna++) {
-				Celula celula = mapa2.get(linha).get(coluna);
+				Celula celula = mapa.get(linha).get(coluna);
 				if (celula != null) {
 					celula.setEnabled(false);
 				}
@@ -180,7 +180,7 @@ public class ElemLexAutomato extends ElemLex {
 			for (int coluna = 0; coluna < colunas; coluna++) {
 
 				if (!(linha == 0 && coluna <= 1)) {
-					sb.append(mapa2.get(linha).get(coluna).getText());
+					sb.append(mapa.get(linha).get(coluna).getText());
 				} else {
 					sb.append(" ");
 				}
@@ -229,7 +229,7 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	private void addLine() {
-		mapa2.add(new Vector<Celula>());
+		mapa.add(new Vector<Celula>());
 		for (int i = 0; i < colunas; i++) {
 			addComponent(linhas, i);
 		}
@@ -252,19 +252,19 @@ public class ElemLexAutomato extends ElemLex {
 		tabela.add(componente, gbc);
 
 		try {
-			mapa2.get(linha);
+			mapa.get(linha);
 		} catch (ArrayIndexOutOfBoundsException e) {
-			mapa2.add(new Vector<Celula>());
+			mapa.add(new Vector<Celula>());
 		} finally {
-			mapa2.get(linha).add(componente);
+			mapa.get(linha).add(componente);
 		}
 		this.revalidate();
 	}
 
 	@Override
 	public void irPara(int linha, int coluna) {
-		// TODO Auto-generated method stub
-		System.out.println("nao implementado");
+		System.out.println("lelek");
+		mapa.get(linha).get(coluna).setFocus();
 	}
 
 }

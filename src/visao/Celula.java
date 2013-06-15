@@ -18,4 +18,5 @@ public abstract class Celula extends JPanel{
 	public abstract void setText(String s);
 	@Override
 	public abstract void setEnabled(boolean enabled);
+	public abstract void setFocus();
 }

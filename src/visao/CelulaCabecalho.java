@@ -59,4 +59,9 @@ public class CelulaCabecalho extends Celula {
 		textField.setEnabled(enabled);
 	}
 
+	@Override
+	public void setFocus() {
+		textField.grabFocus();
+	}
+
 }

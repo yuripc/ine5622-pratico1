@@ -62,4 +62,9 @@ public class CelulaCorpo extends Celula {
 		textArea.setEnabled(enabled);
 	}
 
+	@Override
+	public void setFocus() {
+		textArea.grabFocus();
+	}
+
 }
