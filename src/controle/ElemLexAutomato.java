@@ -39,7 +39,7 @@ public class ElemLexAutomato extends ElemLex {
 			}
 
 			// Valida estados iniciais e finais
-			String coluna0 = tabela[linha][0];
+			String coluna0 = tabela[linha][0].trim();
 			if (coluna0.contains("*")) {
 				estadosFinais.add(estado);
 			}
@@ -163,7 +163,35 @@ public class ElemLexAutomato extends ElemLex {
 			estadosPendentes.remove(0);
 		}
 
-		//TODO NORMALIZAR ESTADOS
+		Vector<String> estadosNormalizados = new Vector<String>();
+
+		for (String estado : estados) {
+			estado = normalizarEstado(estado);
+
+			if (estadosNormalizados.contains(estado)) {
+				StringBuilder estadoCopia = new StringBuilder(estado);
+
+				for (int anexo = 1; estadosNormalizados.contains(estado); anexo++) {
+					estado = estadoCopia.append(anexo).toString();
+				}
+			}
+			estadosNormalizados.add(estado);
+		}
+
+		for (int linha = 0; linha < estados.size(); linha++) {
+			Vector<String> vectorLinha = operacoes.get(linha);
+			for (int coluna = 0; coluna < alfabeto.size(); coluna++) {
+				String operacao = vectorLinha.get(coluna);
+				if (!operacao.equals(epsilon)) {
+					int pos = estados.indexOf(operacao);
+					vectorLinha.set(coluna, estadosNormalizados.get(pos));
+				}
+			}
+		}
+
+		for (int linha = 0; linha < estados.size(); linha++) {
+			estados.set(linha, estadosNormalizados.get(linha));
+		}
 	}
 
 	protected String proximoEstado(String estado, char entrada) {
@@ -192,10 +220,9 @@ public class ElemLexAutomato extends ElemLex {
 		return StringUtils.join(proximosEstados, separador);
 	}
 
-	// TODO COLOCAR DE VOLTA
-	//	protected String normalizarEstado(String s) {
-	//		return StringUtils.capitalize(s.toLowerCase()).replace(separador, "");
-	//	}
+	protected String normalizarEstado(String s) {
+		return StringUtils.capitalize(s.toLowerCase());
+	}
 
 	protected void setOperacao(String estado, char entrada, String proximoEstado) {
 		int linha = estados.indexOf(estado);

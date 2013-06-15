@@ -1,6 +1,8 @@
 package controle;
 
 public class InvalidInputException extends Exception {
+	private static final long serialVersionUID = 1L;
+
 	protected final int linha, coluna;
 
 	public InvalidInputException(String message) {

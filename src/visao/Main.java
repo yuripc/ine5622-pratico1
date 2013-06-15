@@ -486,12 +486,12 @@ public class Main {
 				pos = "direita";
 			}
 
-			messageError("Elemento da " + pos + " não é válido:\n" + e.getMessage() + "\nConsulte a 'Ajuda' para obter mais informações");
-
 
 			if (e.getLinha() >= 0) {
 				((ElemLex) panel).irPara(e.getLinha(), e.getColuna());
 			}
+
+			messageError("Elemento da " + pos + " não é válido:\n" + e.getMessage() + "\nConsulte a 'Ajuda' para obter mais informações");
 
 			return null;
 		}
