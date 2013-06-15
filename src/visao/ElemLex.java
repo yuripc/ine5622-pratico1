@@ -29,5 +29,9 @@ public abstract class ElemLex extends JPanel implements Cloneable{
 		}
 	}
 
+	public abstract void irPara(int linha,int coluna);
+
 	public abstract void habilitarEdicao(boolean habilitar);
+
+
 }

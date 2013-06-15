@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 
+import controle.InvalidInputException;
+
 public class Main {
 
 	private static JFrame frame;
@@ -462,26 +464,32 @@ public class Main {
 	}
 
 	private static controle.ElemLex criarElem(boolean esquerda) {
+		JPanel panel;
+
+		if (esquerda) {
+			panel = (JPanel) splitPane.getLeftComponent();
+		} else {
+			panel = (JPanel) splitPane.getRightComponent();
+		}
+
 		try {
-			JPanel panel;
-			if (esquerda) {
-				panel = (JPanel) splitPane.getLeftComponent();
-			} else {
-				panel = (JPanel) splitPane.getRightComponent();
-			}
 			if (panel instanceof ElemLexAutomato) {
 				return new controle.ElemLexAutomato(panel.toString());
 			} else {
 				return new controle.ElemLexGR(panel.toString());
 			}
-		} catch (Exception e) {
+		} catch (InvalidInputException e) {
 			String pos;
 			if (esquerda) {
 				pos = "esquerda";
 			} else {
 				pos = "direita";
 			}
+			if (e.getLinha() >= 0) {
+				((ElemLex) panel).irPara(e.getLinha(), e.getColuna());
+			}
 			messageError("Elemento da " + pos + " não é válido:\n" + e.getMessage() + "\nConsulte a 'Ajuda' para obter mais informações");
+
 			e.printStackTrace();
 			return null;
 		}
@@ -534,7 +542,7 @@ public class Main {
 		return new JPanel[] { (JPanel) splitPane.getLeftComponent(), (JPanel) splitPane.getRightComponent() };
 	}
 
-	public static void salvarComo(JPanel[] panels){
+	public static void salvarComo(JPanel[] panels) {
 		try {
 			arquivo.salvarComo(panels);
 		} catch (IOException e1) {

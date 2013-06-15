@@ -2,9 +2,9 @@ package controle;
 
 public class ElemLexGR extends ElemLex {
 
-	public ElemLexGR(String elementoLexico) throws Exception {
+	public ElemLexGR(String elementoLexico) throws InvalidInputException {
 		// TODO Auto-generated method stub
-		throw new Exception("n‹o implementado");
+		throw new InvalidInputException("n‹o implementado");
 	}
 
 

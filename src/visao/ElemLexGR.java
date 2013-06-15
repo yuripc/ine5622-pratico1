@@ -45,4 +45,10 @@ public class ElemLexGR extends ElemLex {
 	public void habilitarEdicao(boolean habilitar) {
 		textArea.setEnabled(habilitar);
 	}
+
+	@Override
+	public void irPara(int linha, int coluna) {
+		// TODO Auto-generated method stub
+		System.out.println("n‹o implementado");
+	}
 }

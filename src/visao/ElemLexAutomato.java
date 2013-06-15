@@ -261,4 +261,10 @@ public class ElemLexAutomato extends ElemLex {
 		this.revalidate();
 	}
 
+	@Override
+	public void irPara(int linha, int coluna) {
+		// TODO Auto-generated method stub
+		System.out.println("nao implementado");
+	}
+
 }

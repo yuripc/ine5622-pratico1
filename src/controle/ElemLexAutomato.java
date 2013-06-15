@@ -11,15 +11,7 @@ public class ElemLexAutomato extends ElemLex {
 	protected final String separador = ",";
 	protected final String epsilon = "&";
 
-	protected ElemLexAutomato(Vector<Character> alfabeto, String estadoInicial) {
-		this.alfabeto = alfabeto;
-		estados = new Vector<String>();
-		this.estadoInicial = estadoInicial;
-		estadosFinais = new Vector<String>();
-		operacoes = new Vector<Vector<String>>();
-	}
-
-	public ElemLexAutomato(String input) throws Exception {
+	public ElemLexAutomato(String input) throws InvalidInputException {
 		String[] s = input.split("\n");
 		alfabeto = new Vector<Character>();
 		estados = new Vector<String>();
@@ -40,10 +32,10 @@ public class ElemLexAutomato extends ElemLex {
 				if (!estados.contains(estado)) {
 					estados.add(estado);
 				} else {
-					throw new Exception("Estado " + estado + " repetido - linha " + linha);
+					throw new InvalidInputException("Estado " + estado + " repetido", linha, 1);
 				}
 			} else {
-				throw new Exception("Estado deve conter uma letra maiœscula seguida de 0 ou mais letras e/ou d’gitos " + " - linha " + linha);
+				throw new InvalidInputException("Estado deve conter uma letra maiœscula seguida de 0 ou mais letras e/ou d’gitos", linha, 1);
 			}
 
 			// Valida estados iniciais e finais
@@ -55,46 +47,42 @@ public class ElemLexAutomato extends ElemLex {
 				if (estadoInicial.equals("")) {
 					estadoInicial = estado;
 				} else {
-					throw new Exception("Ja existe estado inicial - linha " + linha);
+					throw new InvalidInputException("Ja existe estado inicial", linha, 0);
 				}
 			}
 			if (!((coluna0.length() == 3 && coluna0.contains("*") && coluna0.contains("->")) || (coluna0.length() == 2 && coluna0.contains("->"))
 					|| (coluna0.length() == 1 && coluna0.contains("*")) || (coluna0.length() == 0))) {
-				System.out.println(coluna0.contains("*"));
-				System.out.println(coluna0.contains("->"));
-				System.out.println(coluna0.length() == 3);
 
-				throw new Exception("Apenas '->' ou '*' s‹o v‡lidos na coluna 0 - linha " + linha);
+				throw new InvalidInputException("Apenas '->' ou '*' s‹o v‡lidos", linha, 0);
 			}
 		}
 
 		if (estadoInicial.equals("")) {
-			throw new Exception("Nenhum estado inicial definido");
+			throw new InvalidInputException("Nenhum estado inicial definido");
 		} else if (estadosFinais.size() == 0) {
-			throw new Exception("Nenhum estado final definido");
+			throw new InvalidInputException("Nenhum estado final definido");
 		} else if (estados.size() == 0) {
-			throw new Exception("Nenhum estado definido");
+			throw new InvalidInputException("Nenhum estado definido");
 		}
 
 		// Valida alfabeto
 		for (int coluna = 2; coluna < tabela[0].length; coluna++) {
 			if (tabela[0][coluna].length() > 1) {
-				throw new Exception("Caractere de entrada contem mais de um simbolo - coluna " + coluna);
+				throw new InvalidInputException("Caractere de entrada deve ser um œnico caractere", 0, coluna);
 			}
 			char caractere = tabela[0][coluna].charAt(0);
 			if ((caractere + "").matches("[a-z0-9]")) {
 				if (!alfabeto.contains(caractere)) {
 					alfabeto.add(caractere);
 				} else {
-					throw new Exception("Caractere de entrada ja inserido - coluna " + coluna);
+					throw new InvalidInputException("Caractere de entrada ja inserido", 0, coluna);
 				}
 			} else {
-				throw new Exception("Caractere de entrada s— pode ser letra minuscula ou digito - coluna " + coluna);
+				throw new InvalidInputException("Caractere de entrada s— pode ser letra minuscula ou digito", 0, coluna);
 			}
-
 		}
 
-		// TODO Valida transicoes
+		// Valida transicoes
 		for (int linha = 1; linha < tabela.length; linha++) {
 			operacoes.add(new Vector<String>());
 			for (int coluna = 2; coluna < tabela[0].length; coluna++) {
@@ -108,7 +96,7 @@ public class ElemLexAutomato extends ElemLex {
 							transicoesValidas.add(transicao);
 						}
 					} else if (!(transicao.matches("^[-&]$") || !transicao.isEmpty())) {
-						throw new Exception("Estado " + transicao + " n‹o definido - linha " + linha + " coluna " + coluna);
+						throw new InvalidInputException("Estado " + transicao + " n‹o definido", linha, coluna);
 					}
 				}
 
@@ -140,12 +128,12 @@ public class ElemLexAutomato extends ElemLex {
 				if (!estados.contains(proxEstado) && !estadosPendentes.contains(proxEstado) && !proxEstado.equals(epsilon)) {
 					estadosPendentes.add(proxEstado);
 				}
-				setOperacao(estado, entrada, normalizarEstado(proxEstado));
+				setOperacao(estado, entrada, proxEstado.replace(",", ""));
 			}
 		}
 
 		while (estadosPendentes.size() > 0) {
-			String estado = normalizarEstado(estadosPendentes.get(0));
+			String estado = estadosPendentes.get(0).replace(",", "");
 			String estadoNaoDeterminizado = estadosPendentes.get(0);
 
 			estados.add(estado);
@@ -158,7 +146,7 @@ public class ElemLexAutomato extends ElemLex {
 					estadosPendentes.add(proxEstado);
 				}
 
-				setOperacao(estado, entrada, normalizarEstado(proxEstado));
+				setOperacao(estado, entrada, proxEstado);
 			}
 
 			boolean estadoFinal = false;
@@ -173,6 +161,8 @@ public class ElemLexAutomato extends ElemLex {
 
 			estadosPendentes.remove(0);
 		}
+
+		//TODO NORMALIZAR ESTADOS
 	}
 
 	protected String proximoEstado(String estado, char entrada) {
@@ -202,9 +192,10 @@ public class ElemLexAutomato extends ElemLex {
 		return StringUtils.join(proximosEstados, separador);
 	}
 
-	protected String normalizarEstado(String s) {
-		return StringUtils.capitalize(s.toLowerCase()).replace(separador, "");
-	}
+	// TODO COLOCAR DE VOLTA
+	//	protected String normalizarEstado(String s) {
+	//		return StringUtils.capitalize(s.toLowerCase()).replace(separador, "");
+	//	}
 
 	protected void setOperacao(String estado, char entrada, String proximoEstado) {
 		int linha = estados.indexOf(estado);
