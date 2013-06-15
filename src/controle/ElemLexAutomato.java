@@ -91,11 +91,12 @@ public class ElemLexAutomato extends ElemLex {
 				Vector<String> transicoesValidas = new Vector<String>();
 
 				for (String transicao : transicoes) {
+					transicao = transicao.trim();
 					if (estados.contains(transicao)) {
 						if (!transicoesValidas.contains(transicao)) {
 							transicoesValidas.add(transicao);
 						}
-					} else if (!(transicao.matches("^[-&]$") || !transicao.isEmpty())) {
+					} else if (!transicao.matches("^[-&]$") && !transicao.equals("")) {
 						throw new InvalidInputException("Estado " + transicao + " n‹o definido", linha, coluna);
 					}
 				}
@@ -128,12 +129,12 @@ public class ElemLexAutomato extends ElemLex {
 				if (!estados.contains(proxEstado) && !estadosPendentes.contains(proxEstado) && !proxEstado.equals(epsilon)) {
 					estadosPendentes.add(proxEstado);
 				}
-				setOperacao(estado, entrada, proxEstado.replace(",", ""));
+				setOperacao(estado, entrada, proxEstado.replace(separador, ""));
 			}
 		}
 
 		while (estadosPendentes.size() > 0) {
-			String estado = estadosPendentes.get(0).replace(",", "");
+			String estado = estadosPendentes.get(0).replace(separador, "");
 			String estadoNaoDeterminizado = estadosPendentes.get(0);
 
 			estados.add(estado);
@@ -168,7 +169,6 @@ public class ElemLexAutomato extends ElemLex {
 	protected String proximoEstado(String estado, char entrada) {
 		Vector<String> proximosEstados = new Vector<String>();
 
-		// Adiciona cada transicao de cada sub estado a proximosEstados
 		for (String subEstado : estado.split(separador)) {
 			if (!subEstado.equals(epsilon)) {
 				int linha = estados.indexOf(subEstado);
