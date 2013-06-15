@@ -378,7 +378,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				controle.ElemLex elem = criarElem(false);
 				if (elem != null) {
-					elem.determinizar();
+					new Operacoes(elem.determinizar());
 				}
 			}
 		});
