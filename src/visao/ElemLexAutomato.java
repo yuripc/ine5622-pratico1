@@ -263,7 +263,6 @@ public class ElemLexAutomato extends ElemLex {
 
 	@Override
 	public void irPara(int linha, int coluna) {
-		System.out.println("lelek");
 		mapa.get(linha).get(coluna).setFocus();
 	}
 
