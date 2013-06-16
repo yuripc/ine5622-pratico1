@@ -119,7 +119,18 @@ public class ElemLexAutomato extends ElemLex {
 			}
 		}
 
-		// TODO Passar elemento inicial para o topo
+		// Passa estado inicial para o topo
+		if(estados.get(0)!=estadoInicial){
+			int pos = estados.indexOf(estadoInicial);
+
+			estados.set(pos, estados.get(0));
+			estados.set(0, estadoInicial);
+
+			Vector<String> operacoesInicial = operacoes.get(pos);
+
+			operacoes.set(pos, operacoes.get(0));
+			operacoes.set(0, operacoesInicial);
+		}
 	}
 
 	protected void determinizarAutomato() {
