@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 public class ElemLexAutomato extends ElemLex {
 
 	protected final String separador = ",";
-	protected final String epsilon = "&";
+	protected final String vazio = "-";
 
 	public ElemLexAutomato(String input) throws InvalidInputException {
 		String[] s = input.split("\n");
@@ -27,7 +27,7 @@ public class ElemLexAutomato extends ElemLex {
 		for (int linha = 1; linha < tabela.length; linha++) {
 
 			// Valida estados
-			String estado = tabela[linha][1];
+			String estado = tabela[linha][1].trim();
 			if (estado.matches("[A-Z][a-z0-9]{" + (estado.length() - 1) + "}")) {
 				if (!estados.contains(estado)) {
 					estados.add(estado);
@@ -67,10 +67,10 @@ public class ElemLexAutomato extends ElemLex {
 
 		// Valida alfabeto
 		for (int coluna = 2; coluna < tabela[0].length; coluna++) {
-			if (tabela[0][coluna].length() > 1) {
+			if (tabela[0][coluna].trim().length() > 1) {
 				throw new InvalidInputException("Caractere de entrada deve ser um œnico caractere", 0, coluna);
 			}
-			char caractere = tabela[0][coluna].charAt(0);
+			char caractere = tabela[0][coluna].trim().charAt(0);
 			if ((caractere + "").matches("[a-z0-9]")) {
 				if (!alfabeto.contains(caractere)) {
 					alfabeto.add(caractere);
@@ -85,37 +85,41 @@ public class ElemLexAutomato extends ElemLex {
 		// Valida transicoes
 		for (int linha = 1; linha < tabela.length; linha++) {
 			operacoes.add(new Vector<String>());
+
 			for (int coluna = 2; coluna < tabela[0].length; coluna++) {
 				String[] transicoes = tabela[linha][coluna].split(separador);
 
-				Vector<String> transicoesValidas = new Vector<String>();
+				StringBuilder transicaoFinal = new StringBuilder();
 
-				for (String transicao : transicoes) {
-					transicao = transicao.trim();
-					if (estados.contains(transicao)) {
-						if (!transicoesValidas.contains(transicao)) {
-							transicoesValidas.add(transicao);
-						}
-					} else if (!transicao.matches("^[-&]$") && !transicao.equals("")) {
-						throw new InvalidInputException("Estado " + transicao + " n‹o definido", linha, coluna);
-					}
-				}
-
-				StringBuilder transicao = new StringBuilder();
-				if (transicoesValidas.isEmpty()) {
-					transicao.append(epsilon);
+				if (transicoes[0].equals(vazio) || transicoes[0].trim().length() == 0) {
+					transicaoFinal.append(vazio);
 				} else {
-					for (String transicaoValida : transicoesValidas) {
-						transicao.append(transicaoValida + separador);
+					Vector<String> transicoesValidas = new Vector<String>();
+					for (String transicao : transicoes) {
+						transicao = transicao.trim();
+						if (estados.contains(transicao)) {
+							if (!transicoesValidas.contains(transicao)) {
+								transicoesValidas.add(transicao);
+							}
+						} else {
+							if (transicao.equals(vazio)) {
+								throw new InvalidInputException(vazio + " n‹o pode ser usado junto a outros estados", linha, coluna);
+							} else if (transicao.trim().length() > 0) {
+								throw new InvalidInputException("Estado " + transicao + " n‹o definido", linha, coluna);
+							}
+						}
 					}
-
-					transicao.deleteCharAt(transicao.length() - 1);
+					for (String transicaoValida : transicoesValidas) {
+						transicaoFinal.append(transicaoValida + separador);
+					}
+					transicaoFinal.deleteCharAt(transicaoFinal.length() - 1);
 				}
 
-				operacoes.get(linha - 1).add(transicao.toString());
+				operacoes.get(linha - 1).add(transicaoFinal.toString());
 			}
 		}
 
+		// TODO Passar elemento inicial para o topo
 	}
 
 	protected void determinizarAutomato() {
@@ -126,7 +130,7 @@ public class ElemLexAutomato extends ElemLex {
 			for (char entrada : alfabeto) {
 				String proxEstado = proximoEstado(estado, entrada);
 
-				if (!estados.contains(proxEstado) && !estadosPendentes.contains(proxEstado) && !proxEstado.equals(epsilon)) {
+				if (!estados.contains(proxEstado) && !estadosPendentes.contains(proxEstado) && !proxEstado.equals(vazio)) {
 					estadosPendentes.add(proxEstado);
 				}
 				setOperacao(estado, entrada, proxEstado.replace(separador, ""));
@@ -143,20 +147,18 @@ public class ElemLexAutomato extends ElemLex {
 			for (char entrada : alfabeto) {
 				String proxEstado = proximoEstado(estadoNaoDeterminizado, entrada);
 
-				if (!estados.contains(proxEstado) && !estadosPendentes.contains(proxEstado) && !proxEstado.equals(epsilon)) {
+				if (!estados.contains(proxEstado) && !estadosPendentes.contains(proxEstado) && !proxEstado.equals(vazio)) {
 					estadosPendentes.add(proxEstado);
 				}
 
 				setOperacao(estado, entrada, proxEstado);
 			}
 
-			boolean estadoFinal = false;
 			String[] subEstados = estadoNaoDeterminizado.split(separador);
 
-			for (int i = 0; i < subEstados.length && !estadoFinal; i++) {
+			for (int i = 0; i < subEstados.length && !estadosFinais.contains(estado); i++) {
 				if (estadosFinais.contains(subEstados[i])) {
 					estadosFinais.add(estado);
-					estadoFinal = true;
 				}
 			}
 
@@ -182,7 +184,7 @@ public class ElemLexAutomato extends ElemLex {
 			Vector<String> vectorLinha = operacoes.get(linha);
 			for (int coluna = 0; coluna < alfabeto.size(); coluna++) {
 				String operacao = vectorLinha.get(coluna);
-				if (!operacao.equals(epsilon)) {
+				if (!operacao.equals(vazio)) {
 					int pos = estados.indexOf(operacao);
 					vectorLinha.set(coluna, estadosNormalizados.get(pos));
 				}
@@ -198,13 +200,13 @@ public class ElemLexAutomato extends ElemLex {
 		Vector<String> proximosEstados = new Vector<String>();
 
 		for (String subEstado : estado.split(separador)) {
-			if (!subEstado.equals(epsilon)) {
+			if (!subEstado.equals(vazio)) {
 				int linha = estados.indexOf(subEstado);
 				int coluna = alfabeto.indexOf(entrada);
 				String proxEstado = operacoes.get(linha).get(coluna);
 
 				for (String subProxEstado : proxEstado.split(separador)) {
-					if (!subProxEstado.equals(epsilon) && !proximosEstados.contains(subProxEstado)) {
+					if (!subProxEstado.equals(vazio) && !proximosEstados.contains(subProxEstado)) {
 						proximosEstados.add(subProxEstado);
 					}
 				}
@@ -212,7 +214,7 @@ public class ElemLexAutomato extends ElemLex {
 		}
 
 		if (proximosEstados.size() == 0) {
-			proximosEstados.add(epsilon);
+			proximosEstados.add(vazio);
 		} else {
 			removerDuplicatas(proximosEstados);
 		}
@@ -238,9 +240,49 @@ public class ElemLexAutomato extends ElemLex {
 
 	@Override
 	public ElemLexGR toGR() {
-		// TODO Auto-generated method stub
-		System.out.println("n‹o implementado");
-		return null;
+		String separadorGR = " | ";
+		StringBuilder sb = new StringBuilder();
+
+		for (String estado : estados) {
+			sb.append(estado).append(" -> ");
+
+			Vector<String> possibilidades = new Vector<String>();
+
+			for (char entrada : alfabeto) {
+				String proxEstado = proximoEstado(estado, entrada);
+
+				if (!proxEstado.equals(vazio)) {
+
+					String[] subEstados = proxEstado.split(separador);
+					for (String subEstado : subEstados) {
+						possibilidades.add(entrada+subEstado);
+
+						if(estadosFinais.contains(subEstado)){
+							possibilidades.add(entrada+"");
+						}
+					}
+				}
+			}
+
+			removerDuplicatas(possibilidades);
+
+			for(String possibilidade : possibilidades){
+				sb.append(possibilidade).append(separadorGR);
+			}
+
+			for(int i = 0;i<separadorGR.length();i++){
+				sb.deleteCharAt(sb.length()-1);
+			}
+
+			sb.append("\n");
+		}
+
+		try {
+			return new ElemLexGR (sb.toString());
+		} catch (InvalidInputException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
@@ -251,6 +293,11 @@ public class ElemLexAutomato extends ElemLex {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public ElemLex converter() {
+		return toGR();
 	}
 
 	@Override

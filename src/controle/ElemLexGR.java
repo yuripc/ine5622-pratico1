@@ -24,4 +24,9 @@ public class ElemLexGR extends ElemLex {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public ElemLex converter(){
+		return toAutomato();
+	}
 }

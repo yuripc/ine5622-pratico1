@@ -355,7 +355,10 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				System.out.println("Ação não configurada");
+				controle.ElemLex elem = criarElem(true);
+				if (elem != null) {
+					elem.converter();
+				}
 			}
 		});
 
@@ -411,7 +414,10 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				System.out.println("Ação não configurada");
+				controle.ElemLex elem = criarElem(false);
+				if (elem != null) {
+					elem.converter();
+				}
 			}
 		});
 	}

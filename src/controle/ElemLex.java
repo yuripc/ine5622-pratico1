@@ -9,7 +9,6 @@ public abstract class ElemLex implements Cloneable {
 	String estadoInicial;
 	Vector<String> estadosFinais;
 	Vector<Vector<String>> operacoes;
-	String input;
 
 	public Vector<Operacao> determinizar() {
 		ElemLexAutomato elem = toAutomato();
@@ -17,7 +16,7 @@ public abstract class ElemLex implements Cloneable {
 		elem.determinizarAutomato();
 
 		Vector<Operacao> operacoes = new Vector<Operacao>();
-		operacoes.add(new Operacao("Determinimização",returnToOrigin(elem),true));
+		operacoes.add(new Operacao("Determinimização", returnToOrigin(elem), true));
 		return operacoes;
 	}
 
@@ -63,4 +62,7 @@ public abstract class ElemLex implements Cloneable {
 	public abstract ElemLexGR toGR();
 
 	public abstract ElemLexAutomato toAutomato();
+
+	public abstract ElemLex converter();
+
 }
