@@ -99,9 +99,12 @@ public class ElemLexGR extends ElemLex {
 	}
 
 	@Override
-	public ElemLex converter() {
-		return toAutomato();
+	public Vector<Operacao> converter() {
+		Vector<Operacao> operacoes = new Vector<Operacao>();
+		operacoes.add(new Operacao("Convers‹o para Automato", toAutomato(), true));
+		return operacoes;
 	}
+
 
 	@Override
 	public String toString() {

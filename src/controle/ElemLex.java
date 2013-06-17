@@ -78,6 +78,6 @@ public abstract class ElemLex implements Cloneable {
 
 	public abstract ElemLexAutomato toAutomato();
 
-	public abstract ElemLex converter();
+	public abstract Vector<Operacao> converter();
 
 }

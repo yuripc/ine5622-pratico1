@@ -354,10 +354,9 @@ public class Main {
 		mntmA1Converter.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
 				controle.ElemLex elem = criarElem(true);
 				if (elem != null) {
-					elem.converter();
+					new Operacoes(elem.converter());
 				}
 			}
 		});
@@ -416,7 +415,7 @@ public class Main {
 				// TODO
 				controle.ElemLex elem = criarElem(false);
 				if (elem != null) {
-					elem.converter();
+					new Operacoes(elem.converter());
 				}
 			}
 		});
