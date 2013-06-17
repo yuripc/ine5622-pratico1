@@ -7,8 +7,6 @@ import java.util.Vector;
 import org.apache.commons.lang3.StringUtils;
 
 public class ElemLexAutomato extends ElemLex {
-
-	String estadoInicial;
 	Vector<String> estadosFinais;
 
 	protected final String separador = ",";
@@ -259,11 +257,10 @@ public class ElemLexAutomato extends ElemLex {
 
 	@Override
 	public ElemLexGR toGR() {
-		String separadorGR = " | ";
 		StringBuilder sb = new StringBuilder();
 
 		for (String estado : estados) {
-			sb.append(estado).append(" -> ");
+			sb.append(estado).append(" ").append(ElemLexGR.INICIO_DERIVACOES).append(" ");
 
 			Vector<String> possibilidades = new Vector<String>();
 
@@ -286,10 +283,10 @@ public class ElemLexAutomato extends ElemLex {
 			removerDuplicatas(possibilidades);
 
 			for (String possibilidade : possibilidades) {
-				sb.append(possibilidade).append(separadorGR);
+				sb.append(possibilidade).append(" ").append(ElemLexGR.SEPARADOR).append(" ");
 			}
 
-			for (int i = 0; i < separadorGR.length(); i++) {
+			for (int i = 0; i < ElemLexGR.SEPARADOR.length(); i++) {
 				sb.deleteCharAt(sb.length() - 1);
 			}
 
@@ -300,7 +297,7 @@ public class ElemLexAutomato extends ElemLex {
 					estado = estadoCopia.append(anexo).toString();
 				}
 
-				String novaLinha = estado + "->" + sb.toString().split("->")[1] + separadorGR + "&" + "\n";
+				String novaLinha = estado + ElemLexGR.INICIO_DERIVACOES + sb.toString().split(ElemLexGR.INICIO_DERIVACOES)[1] + ElemLexGR.SEPARADOR + ElemLexGR.EPSILON + "\n";
 				sb.insert(0, novaLinha);
 			}
 

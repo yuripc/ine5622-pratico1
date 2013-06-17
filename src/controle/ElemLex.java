@@ -8,6 +8,8 @@ public abstract class ElemLex implements Cloneable {
 	Vector<String> estados;
 	Vector<Vector<String>> operacoes;
 
+	String estadoInicial;
+
 	public Vector<Operacao> determinizar() {
 		ElemLexAutomato elem = toAutomato();
 
