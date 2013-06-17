@@ -42,7 +42,7 @@ public class CelulaCabecalho extends Celula {
 		if (textField.getText().equals("")) {
 			return " ";
 		} else {
-			return textField.getText();
+			return textField.getText().replace("\t", "");
 		}
 	}
 

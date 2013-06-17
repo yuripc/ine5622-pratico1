@@ -45,7 +45,7 @@ public class CelulaCorpo extends Celula {
 		if (textArea.getText().equals("")) {
 			return " ";
 		} else {
-			return textArea.getText();
+			return textArea.getText().replace("\t", "");
 		}
 	}
 

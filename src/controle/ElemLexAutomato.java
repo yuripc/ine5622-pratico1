@@ -8,6 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ElemLexAutomato extends ElemLex {
 
+	String estadoInicial;
+	Vector<String> estadosFinais;
+
 	protected final String separador = ",";
 	protected final String vazio = "-";
 
@@ -28,14 +31,16 @@ public class ElemLexAutomato extends ElemLex {
 
 			// Valida estados
 			String estado = tabela[linha][1].trim();
-			if (estado.matches("[A-Z][a-z0-9]{" + (estado.length() - 1) + "}")) {
-				if (!estados.contains(estado)) {
-					estados.add(estado);
-				} else {
-					throw new InvalidInputException("Estado " + estado + " repetido", linha, 1);
+			try {
+				if (isEstadoValido(estado)) {
+					if (!estados.contains(estado)) {
+						estados.add(estado);
+					} else {
+						throw new InvalidInputException("Estado " + estado + " repetido");
+					}
 				}
-			} else {
-				throw new InvalidInputException("Estado deve conter uma letra maiœscula seguida de 0 ou mais letras e/ou d’gitos", linha, 1);
+			} catch (InvalidInputException e) {
+				throw new InvalidInputException(e.getMessage(), linha, 1);
 			}
 
 			// Valida estados iniciais e finais
@@ -67,21 +72,24 @@ public class ElemLexAutomato extends ElemLex {
 
 		// Valida alfabeto
 		for (int coluna = 2; coluna < tabela[0].length; coluna++) {
-			if (tabela[0][coluna].trim().length() > 1) {
-				throw new InvalidInputException("Caractere de entrada deve ser um œnico caractere", 0, coluna);
-			}
-			char caractere = tabela[0][coluna].trim().charAt(0);
-			if ((caractere + "").matches("[a-z0-9]")) {
-				if (!alfabeto.contains(caractere)) {
-					alfabeto.add(caractere);
-				} else {
-					throw new InvalidInputException("Caractere de entrada ja inserido", 0, coluna);
+
+			String entrada = tabela[0][coluna].trim();
+
+			try {
+				if (isEntradaValida(entrada)) {
+
+					char caractere = entrada.charAt(0);
+					if (!alfabeto.contains(caractere)) {
+						alfabeto.add(caractere);
+					} else {
+						throw new InvalidInputException("Caractere de entrada ja inserido");
+					}
+
 				}
-			} else {
-				throw new InvalidInputException("Caractere de entrada s— pode ser letra minuscula ou digito", 0, coluna);
+			} catch (InvalidInputException e) {
+				throw new InvalidInputException(e.getMessage(), 0, coluna);
 			}
 		}
-
 		// Valida transicoes
 		for (int linha = 1; linha < tabela.length; linha++) {
 			operacoes.add(new Vector<String>());
@@ -120,7 +128,7 @@ public class ElemLexAutomato extends ElemLex {
 		}
 
 		// Passa estado inicial para o topo
-		if(estados.get(0)!=estadoInicial){
+		if (estados.get(0) != estadoInicial) {
 			int pos = estados.indexOf(estadoInicial);
 
 			estados.set(pos, estados.get(0));
@@ -266,10 +274,10 @@ public class ElemLexAutomato extends ElemLex {
 
 					String[] subEstados = proxEstado.split(separador);
 					for (String subEstado : subEstados) {
-						possibilidades.add(entrada+subEstado);
+						possibilidades.add(entrada + subEstado);
 
-						if(estadosFinais.contains(subEstado)){
-							possibilidades.add(entrada+"");
+						if (estadosFinais.contains(subEstado)) {
+							possibilidades.add(entrada + "");
 						}
 					}
 				}
@@ -277,19 +285,19 @@ public class ElemLexAutomato extends ElemLex {
 
 			removerDuplicatas(possibilidades);
 
-			for(String possibilidade : possibilidades){
+			for (String possibilidade : possibilidades) {
 				sb.append(possibilidade).append(separadorGR);
 			}
 
-			for(int i = 0;i<separadorGR.length();i++){
-				sb.deleteCharAt(sb.length()-1);
+			for (int i = 0; i < separadorGR.length(); i++) {
+				sb.deleteCharAt(sb.length() - 1);
 			}
 
 			sb.append("\n");
 		}
 
 		try {
-			return new ElemLexGR (sb.toString());
+			return new ElemLexGR(sb.toString());
 		} catch (InvalidInputException e) {
 			e.printStackTrace();
 			return null;

@@ -1,12 +1,85 @@
 package controle;
 
+import java.util.Vector;
+
 public class ElemLexGR extends ElemLex {
 
 	public ElemLexGR(String elementoLexico) throws InvalidInputException {
 		// TODO Auto-generated method stub
-		throw new InvalidInputException("n‹o implementado");
-	}
 
+		estados = new Vector<String>();
+		operacoes = new Vector<Vector<String>>();
+
+		String[] linhas = elementoLexico.split("\n");
+
+		for (int linha = 0; linha < linhas.length; linha++) {
+			String[] partesLinha = linhas[linha].split("->");
+
+			if (partesLinha.length > 2) {
+				throw new InvalidInputException("Sequncia '->' s— pode aparecer uma vez por linha", linha, partesLinha[0].length() + partesLinha[1].length()
+						+ 4);
+			}
+
+			String estado = partesLinha[0].trim();
+			try {
+				if (isEstadoValido(estado)) {
+					estados.add(estado);
+				}
+			} catch (InvalidInputException e) {
+				throw new InvalidInputException(e.getMessage(), linha, 0);
+			}
+		}
+
+		for (int linha = 0; linha < linhas.length; linha++) {
+			operacoes.add(new Vector<String>());
+
+			StringBuilder parteProcessada = new StringBuilder();
+			String[] partesLinha = linhas[linha].split("->");
+			String[] operacoesLinha = partesLinha[1].split("\\|");
+
+			Vector<String> operacoesVector = operacoes.get(operacoes.size() - 1);
+
+			parteProcessada.append(partesLinha[0]).append("->");
+
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			for (String operacao : operacoesLinha) {
+
+				if (operacao.trim().length() > 0) {
+
+					String entrada = operacao.trim().substring(0, 1);
+					String proxEstado = operacao.trim().substring(1, operacao.trim().length());
+
+					try {
+						if (isEntradaValida(entrada)) {
+							String transicao = entrada + proxEstado;
+							if (proxEstado.length() > 0) {
+								if (estados.contains(proxEstado)) {
+									if (!operacoesVector.contains(transicao)) {
+										operacoesVector.add(transicao);
+									}
+								} else {
+									throw new InvalidInputException("Estado " + proxEstado + " n‹o definido");
+								}
+							} else {
+								operacoesVector.add(transicao);
+							}
+
+							parteProcessada.append(transicao).append("|");
+
+						}
+
+					} catch (InvalidInputException e) {
+						throw new InvalidInputException(e.getMessage(), linha, parteProcessada.length());
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public ElemLexGR toGR() {
@@ -26,7 +99,25 @@ public class ElemLexGR extends ElemLex {
 	}
 
 	@Override
-	public ElemLex converter(){
+	public ElemLex converter() {
 		return toAutomato();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		for (int linha = 0; linha < estados.size(); linha++) {
+			Vector<String> operacoesLinha = operacoes.get(linha);
+
+			sb.append(estados.get(linha)).append(" -> ");
+			for (int coluna = 0; coluna < operacoesLinha.size() - 1; coluna++) {
+				sb.append(operacoesLinha.get(coluna)).append(" | ");
+			}
+			sb.append(operacoesLinha.get(operacoesLinha.size() - 1));
+			sb.append("\n");
+		}
+
+		return sb.toString();
 	}
 }

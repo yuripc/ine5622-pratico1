@@ -6,8 +6,6 @@ public abstract class ElemLex implements Cloneable {
 
 	Vector<Character> alfabeto;
 	Vector<String> estados;
-	String estadoInicial;
-	Vector<String> estadosFinais;
 	Vector<Vector<String>> operacoes;
 
 	public Vector<Operacao> determinizar() {
@@ -57,6 +55,23 @@ public abstract class ElemLex implements Cloneable {
 		} else {
 			return elemGerado.toGR();
 		}
+	}
+
+	protected boolean isEstadoValido(String estado) throws InvalidInputException {
+		if (!estado.matches("[A-Z][a-z0-9]{" + (estado.length() - 1) + "}")) {
+			throw new InvalidInputException("Estado deve conter uma letra maiœscula seguida de 0 ou mais letras e/ou d’gitos");
+		}
+		return true;
+	}
+
+	protected boolean isEntradaValida(String entrada) throws InvalidInputException {
+		if (entrada.length() > 1) {
+			throw new InvalidInputException("Caractere de entrada deve ser um œnico caractere");
+		}
+		if (!entrada.matches("[a-z0-9]")) {
+			throw new InvalidInputException("Caractere de entrada s— pode ser letra minuscula ou digito");
+		}
+		return true;
 	}
 
 	public abstract ElemLexGR toGR();
