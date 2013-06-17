@@ -41,12 +41,6 @@ public class ElemLexGR extends ElemLex {
 
 			parteProcessada.append(partesLinha[0]).append("->");
 
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 			for (String operacao : operacoesLinha) {
 
 				if (operacao.trim().length() > 0) {
@@ -55,7 +49,7 @@ public class ElemLexGR extends ElemLex {
 					String proxEstado = operacao.trim().substring(1, operacao.trim().length());
 
 					try {
-						if (isEntradaValida(entrada)) {
+						if (entrada.equals("&") || isEntradaValida(entrada)) {
 							String transicao = entrada + proxEstado;
 							if (proxEstado.length() > 0) {
 								if (estados.contains(proxEstado)) {
@@ -104,7 +98,6 @@ public class ElemLexGR extends ElemLex {
 		operacoes.add(new Operacao("Convers‹o para Automato", toAutomato(), true));
 		return operacoes;
 	}
-
 
 	@Override
 	public String toString() {

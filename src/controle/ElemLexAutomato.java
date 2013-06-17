@@ -293,6 +293,17 @@ public class ElemLexAutomato extends ElemLex {
 				sb.deleteCharAt(sb.length() - 1);
 			}
 
+			if (estado.equals(estadoInicial) && estadosFinais.contains(estado)) {
+				StringBuilder estadoCopia = new StringBuilder(estado);
+
+				for (int anexo = 1; estados.contains(estado); anexo++) {
+					estado = estadoCopia.append(anexo).toString();
+				}
+
+				String novaLinha = estado + "->" + sb.toString().split("->")[1] + separadorGR + "&" + "\n";
+				sb.insert(0, novaLinha);
+			}
+
 			sb.append("\n");
 		}
 
