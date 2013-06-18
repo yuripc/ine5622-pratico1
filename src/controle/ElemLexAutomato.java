@@ -56,7 +56,7 @@ public class ElemLexAutomato extends ElemLex {
 			if (!((coluna0.length() == 3 && coluna0.contains("*") && coluna0.contains("->")) || (coluna0.length() == 2 && coluna0.contains("->"))
 					|| (coluna0.length() == 1 && coluna0.contains("*")) || (coluna0.length() == 0))) {
 
-				throw new InvalidInputException("Apenas '->' ou '*' s�o v�lidos", linha, 0);
+				throw new InvalidInputException("Apenas '->' ou '*' são válidos", linha, 0);
 			}
 		}
 
@@ -109,9 +109,9 @@ public class ElemLexAutomato extends ElemLex {
 							}
 						} else {
 							if (transicao.equals(vazio)) {
-								throw new InvalidInputException(vazio + " n�o pode ser usado junto a outros estados", linha, coluna);
+								throw new InvalidInputException(vazio + " não pode ser usado junto a outros estados", linha, coluna);
 							} else if (transicao.trim().length() > 0) {
-								throw new InvalidInputException("Estado " + transicao + " n�o definido", linha, coluna);
+								throw new InvalidInputException("Estado " + transicao + " não definido", linha, coluna);
 							}
 						}
 					}
@@ -441,7 +441,7 @@ public class ElemLexAutomato extends ElemLex {
 	@Override
 	public Vector<Operacao> converter() {
 		Vector<Operacao> operacoes = new Vector<Operacao>();
-		operacoes.add(new Operacao("Convers�o para GR", toGR(), true));
+		operacoes.add(new Operacao("Conversão para GR", toGR(), true));
 		return operacoes;
 	}
 

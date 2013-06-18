@@ -103,10 +103,10 @@ public class Main {
 		JMenuItem mntmSair = new JMenuItem("Sair");
 		mnArquivo.add(mntmSair);
 
-		JMenu mnAcoes = new JMenu("Ações");
+		JMenu mnAcoes = new JMenu("A√ß√µes");
 		menuBar.add(mnAcoes);
 
-		mntmUniao = new JMenuItem("União");
+		mntmUniao = new JMenuItem("Uni√£o");
 		mnAcoes.add(mntmUniao);
 
 		mntmComplemento = new JMenuItem("Complemento");
@@ -199,7 +199,7 @@ public class Main {
 		mntmNovo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (JOptionPane.showConfirmDialog(null, "Todas as alterações não salvas serão perdidas,\nContinuar?", "Confirmação", JOptionPane.YES_NO_OPTION,
+				if (JOptionPane.showConfirmDialog(null, "Todas as altera√ß√µes n√£o salvas ser√£o perdidas,\nContinuar?", "Confirma√ß√£o", JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 					arquivo.resetCurrentFile();
 					addComponent(true, new JPanel());
@@ -236,15 +236,15 @@ public class Main {
 
 					if (erroEsquerda || erroDireita) {
 						if (erroEsquerda && erroDireita) {
-							messageError("Os dois elementos léxicos estão corrompidos e não puderam ser lidos");
+							messageError("Os dois elementos l√©xicos est√£o corrompidos e n√£o puderam ser lidos");
 						} else if (erroEsquerda) {
-							messageError("O elemento léxico da esquerda está corrompido e não pôde ser lido");
+							messageError("O elemento l√©xico da esquerda est√° corrompido e n√£o p√¥de ser lido");
 						} else {
-							messageError("O elemento léxico da direita está corrompido e não pôde ser lido");
+							messageError("O elemento l√©xico da direita est√° corrompido e n√£o p√¥de ser lido");
 						}
 					}
 				} catch (Exception e1) {
-					messageError("Arquivo está corrompido e não pôde ser lido");
+					messageError("Arquivo est√° corrompido e n√£o p√¥de ser lido");
 				}
 
 			}
@@ -257,7 +257,7 @@ public class Main {
 					arquivo.salvar(getPanels());
 				} catch (IOException e1) {
 					e1.printStackTrace();
-					messageError("O arquivo não pode ser salvo");
+					messageError("O arquivo n√£o pode ser salvo");
 				}
 			}
 		});
@@ -272,7 +272,7 @@ public class Main {
 		mntmSair.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (JOptionPane.showConfirmDialog(null, "Qualquer arquivo não salvo será perdido.\nDeseja continuar?", "Confirmação",
+				if (JOptionPane.showConfirmDialog(null, "Qualquer arquivo n√£o salvo ser√° perdido.\nDeseja continuar?", "Confirma√ß√£o",
 						JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 					System.exit(0);
 				}
@@ -283,7 +283,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				System.out.println("Ação não configurada");
+				System.out.println("A√ß√£o n√£o configurada");
 
 			}
 		});
@@ -292,7 +292,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO
-				System.out.println("Ação não configurada");
+				System.out.println("A√ß√£o n√£o configurada");
 			}
 		});
 
@@ -496,7 +496,7 @@ public class Main {
 				((ElemLex) panel).irPara(e.getLinha(), e.getColuna());
 			}
 
-			messageError("Elemento da " + pos + " não é válido:\n" + e.getMessage() + "\nConsulte a 'Ajuda' para obter mais informações");
+			messageError("Elemento da " + pos + " n√£o √© v√°lido:\n" + e.getMessage() + "\nConsulte a 'Ajuda' para obter mais informa√ß√µes");
 
 			return null;
 		}
@@ -517,12 +517,12 @@ public class Main {
 	private static void reconhecerSentenca(boolean esquerda) {
 		controle.ElemLex elem = criarElem(true);
 		if (elem != null) {
-			String input = dialogInput("Qual sentença deseja verificar?");
+			String input = dialogInput("Qual senten√ßa deseja verificar?");
 
 			if (elem.reconhecerSentenca(input)) {
-				messageInformation("Sentença faz parte da linguagem!");
+				messageInformation("Senten√ßa faz parte da linguagem!");
 			} else {
-				messageError("Sentença não faz parte da linguagem!");
+				messageError("Senten√ßa n√£o faz parte da linguagem!");
 			}
 		}
 	}
@@ -530,15 +530,15 @@ public class Main {
 	private static void gerarSentenca(boolean esquerda) {
 		controle.ElemLex elem = criarElem(esquerda);
 		if (elem != null) {
-			int input = Integer.parseInt(dialogInput("Qual o tamanho das sentença?"));
+			int input = Integer.parseInt(dialogInput("Qual o tamanho das senten√ßa?"));
 
 			String[] sentencas = elem.gerarSentencas(input);
 			if (sentencas.length == 0) {
-				messageError("Não existe sentença com esse tamanho");
+				messageError("N√£o existe senten√ßa com esse tamanho");
 			} else {
-				String s = "Sentenças de tamanho " + input + ": " + sentencas.length + "\n";
+				String s = "senten√ßas de tamanho " + input + ": " + sentencas.length + "\n";
 				for (int i = 0; i < sentencas.length; i++) {
-					s += "• " + sentencas[i] + "\n";
+					s += "- " + sentencas[i] + "\n";
 				}
 				messageInformation(s);
 			}
@@ -554,7 +554,7 @@ public class Main {
 			arquivo.salvarComo(panels);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			messageError("O arquivo não pode ser salvo");
+			messageError("O arquivo n√£o pode ser salvo");
 		}
 	}
 }

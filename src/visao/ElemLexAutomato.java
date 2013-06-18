@@ -201,7 +201,7 @@ public class ElemLexAutomato extends ElemLex {
 			String[] sColunas = sLinhas[linha].split("\t");
 
 			if (sColunas.length != colunas) {
-				throw new Exception("Nœmero de colunas diferente da primeira linha\n" + "linha0:" + colunas + "linha" + linha + ":" + sColunas.length);
+				throw new Exception("NÃºmero de colunas diferente da primeira linha\n" + "linha0:" + colunas + "linha" + linha + ":" + sColunas.length);
 			}
 			int coluna = 0;
 			if (linha == 0) {

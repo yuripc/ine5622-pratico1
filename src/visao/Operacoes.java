@@ -54,7 +54,7 @@ public class Operacoes extends JFrame {
 			try {
 				contentPane.add(new visao.Operacao(operacao));
 			} catch (Exception e) {
-				Main.messageError("Ocorreu um erro durante a criação da visualização da operacao " + operacao + "\n" + e.getMessage());
+				Main.messageError("Ocorreu um erro durante a cria√ß√£o da visualiza√ß√£o da operacao " + operacao + "\n" + e.getMessage());
 			}
 		}
 		this.setVisible(true);

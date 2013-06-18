@@ -49,6 +49,6 @@ public class ElemLexGR extends ElemLex {
 	@Override
 	public void irPara(int linha, int coluna) {
 		// TODO Auto-generated method stub
-		System.out.println("não implementado");
+		System.out.println("n√£o implementado");
 	}
 }

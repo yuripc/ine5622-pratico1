@@ -20,7 +20,7 @@ public class ElemLexGR extends ElemLex {
 			String[] partesLinha = linhas[linha].split(INICIO_DERIVACOES);
 
 			if (partesLinha.length > 2) {
-				throw new InvalidInputException("Sequência '" + INICIO_DERIVACOES + "' só pode aparecer uma vez por linha", linha, partesLinha[0].length()
+				throw new InvalidInputException("Sequ√™ncia '" + INICIO_DERIVACOES + "' s√≥ pode aparecer uma vez por linha", linha, partesLinha[0].length()
 						+ partesLinha[1].length() + 4);
 			}
 
@@ -65,9 +65,9 @@ public class ElemLexGR extends ElemLex {
 
 							if (entrada.equals(EPSILON)) {
 								if (!proxEstado.equals(proxEstado)) {
-									throw new InvalidInputException("'" + EPSILON + "' não pode ser usado junto a uma troca de estado");
+									throw new InvalidInputException("'" + EPSILON + "' n√£o pode ser usado junto a uma troca de estado");
 								} else if (linha > 0) {
-									throw new InvalidInputException("'" + EPSILON + "' só pode estar presente no estado inicial");
+									throw new InvalidInputException("'" + EPSILON + "' s√≥ pode estar presente no estado inicial");
 								} else {
 									transicaoPossivel = true;
 								}
@@ -79,18 +79,18 @@ public class ElemLexGR extends ElemLex {
 							} else {
 								if (isEntradaValida(entrada) && estados.contains(proxEstado)) {
 									if (proxEstado.equals(estadoInicial) && operacoes.get(0).contains(EPSILON)) {
-										throw new InvalidInputException("Não pode haver transição para o estado inicial case ele contenha '" + EPSILON + "'");
+										throw new InvalidInputException("N√£o pode haver transi√ß√£o para o estado inicial case ele contenha '" + EPSILON + "'");
 									}
 									transicaoPossivel = true;
 								} else {
-									throw new InvalidInputException("Estado " + proxEstado + " não definido");
+									throw new InvalidInputException("Estado " + proxEstado + " n√£o definido");
 								}
 							}
 
 							if(transicaoPossivel){
 								operacoesVector.add(transicao);
 							} else{
-								throw new InvalidInputException("Exceção não tratada");
+								throw new InvalidInputException("Exce√ß√£o n√£o tratada");
 							}
 						}
 
@@ -116,7 +116,7 @@ public class ElemLexGR extends ElemLex {
 
 	@Override
 	public ElemLexAutomato toAutomato() {
-		System.out.println("não implementado");
+		System.out.println("n√£o implementado");
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -124,7 +124,7 @@ public class ElemLexGR extends ElemLex {
 	@Override
 	public Vector<Operacao> converter() {
 		Vector<Operacao> operacoes = new Vector<Operacao>();
-		operacoes.add(new Operacao("Conversão para Automato", toAutomato(), true));
+		operacoes.add(new Operacao("Convers√£o para Automato", toAutomato(), true));
 		return operacoes;
 	}
 

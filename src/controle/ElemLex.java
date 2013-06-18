@@ -66,7 +66,7 @@ public abstract class ElemLex implements Cloneable {
 
 	protected boolean isEstadoValido(String estado) throws InvalidInputException {
 		if (!estado.matches("[A-Z][a-z0-9]{" + (estado.length() - 1) + "}")) {
-			throw new InvalidInputException("Estado deve conter uma letra maiúscula seguida de 0 ou mais letras e/ou d�gitos");
+			throw new InvalidInputException("Estado deve conter uma letra maiúscula seguida de 0 ou mais letras e/ou dígitos");
 		}
 		return true;
 	}
