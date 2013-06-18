@@ -219,29 +219,135 @@ public class ElemLexAutomato extends ElemLex {
 		eliminarEquivalentes();
 	}
 
+	
+	private void adicionarEstadoDeErro() {
+		estados.add(vazio); //adiciona um estado de erro ao final do automato.
+		Vector<String> vetorOpercoesVazio = new Vector<String>(); //operacoes do estado de erro
+		for (int i = 0; i < alfabeto.size(); i++) {
+			vetorOpercoesVazio.add(vazio);
+		}
+		operacoes.add(vetorOpercoesVazio); //adiciona ao final(ultima posicao) do vetor de operacoes, sincronizando com o ultimo estado adicionado(de erro) na primeira linha do método.
+	}
+	
+	
 	/**
 	 * adicionar estado de erro. ( assumindo que seja "-" - vazio. )
 	 * trocar derivações vazias para derivações para estados de erro
 	 * agrupar estados finais/agrupar estados não finais(incluindo estado de erro)
-	 * ...+
+	 * pegar todos os estados de um grupo, um de cada vez, e definir: 
+	 * *se seus destinos pertencem ao mesmo grupo: deixar no mesmo grupo.
+	 * *se seus destinos pertencerem a grupos diferentes: coloca-los em grupos diferentes.
+	 * aplicar recursivamente o passo 4 5 e 6.
 	 */
 	private void eliminarEquivalentes() {
-		// TODO Auto-generated method stub
+		adicionarEstadoDeErro(); 
+		@SuppressWarnings("unchecked")
+		Vector<String> grupoDeEstadosNFLocais = (Vector<String>)estados.clone(); //cria vetor de strings representando grupo de estados de não finais
+		grupoDeEstadosNFLocais.removeAll(estadosFinais);
+		@SuppressWarnings("unchecked")
+		Vector<String> grupoDeEstadosFinaisLocais = (Vector<String>)estadosFinais.clone(); //cria vetor de strings representando grupo de estados de finais
+		Vector<Vector<String>> gruposDaPrimeiraInteracao = new Vector<Vector<String>>(); //cria vetor armazenando os grupos de vetores de strings
+		gruposDaPrimeiraInteracao.add(grupoDeEstadosFinaisLocais);
+		gruposDaPrimeiraInteracao.add(grupoDeEstadosNFLocais);
+		Vector<Vector<Vector<String>>> interacoesDeGrupos = new Vector<Vector<Vector<String>>>(); //cria vetor de armazenamento de interações.
+		interacoesDeGrupos.add(gruposDaPrimeiraInteracao);
+		 int u = 1;
+		do {
+			
+			Vector<Vector<String>> gruposDaInteracaoCorrente = new Vector<Vector<String>>(); //representando o conjunto de grupos da interação corrente.
+			Vector<String> estadosJaEmGrupo = new Vector<String>(); //vetor a nível de facilitar verificações posteriores.
+		
+			for (int i = 0; i < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).size(); i++) { //pega a quantidade de grupos da ultima interação registrada.
+				for (int j = 0; j < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size(); j++) { //pega um grupo da ultima interação registrada;
+					for (int k = 0; k < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size(); k++) { //pega um dos estados
+						for (int o = 0; o < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size(); o++) { //pega outro estado
+							String estadoCorrenteAComparar = interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).get(o);
+							String outroEstadoDoGrupo = interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).get(k);
 
-		estados.add(vazio);
-		Vector<String> vetorOpercoesVazio = new Vector<String>();
+							if (interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size() == 1) { //já que o grupo contém somente ele mesmo, não haverá o que comprar. então, adicione-o
+								Vector<String> umGrupo = new Vector<String>(); //criar um novo grupo
+								umGrupo.add(estadoCorrenteAComparar); //colocar o estado corrente que não pertencia a grupos, nesse grupo criado
+								estadosJaEmGrupo.add(estadoCorrenteAComparar); //dizer que esse estado, agora, pertence a algum grupo
+								gruposDaInteracaoCorrente.add(umGrupo); //adicionar o grupo criado na lista de grupos da interação corrente
+							} if (!outroEstadoDoGrupo.equals(estadoCorrenteAComparar)) {//permanesce no laço se não for o estado corrente a comparar
+								
+								Vector<String> operacoesDoCorrente = operacoes.get(estados.indexOf(estadoCorrenteAComparar)); //pega operacoes do estado corrente a comparar
+								Vector<String> operacoesDoOutro = operacoes.get(estados.indexOf(outroEstadoDoGrupo)); //pega operacoes de outroEstadoDoGrupo
+								
+								boolean estadosEquivalentes = true;
+								boolean contemUm = false;
+								boolean contemOutro = false;
+								for (int l = 0; l < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).size(); l++) { //pega a quantidade de grupos da ultima interação registrada.
+									for (int m = 0; m < operacoesDoCorrente.size(); m++) { //varre cada estado das operacoes do corrente(e do outro estado comparado)
+										if (interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(l).contains(operacoesDoCorrente.get(m))) {
+											contemUm = true;
+										}
+										if(interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(l).contains(operacoesDoOutro.get(m))) {
+											contemOutro = true;
+										}
+										if (contemUm != contemOutro) {
+											estadosEquivalentes = false;
+										}
+									}
+								}
+								
+								boolean correnteJaEmGrupo = estadosJaEmGrupo.contains(estadoCorrenteAComparar);
+								boolean outroJaEmGrupo = estadosJaEmGrupo.contains(outroEstadoDoGrupo);
+								
+								if (estadosEquivalentes) { //caso forem estados equivalentes
+									if (!correnteJaEmGrupo && outroJaEmGrupo) {
+										for (int l = 0; l < gruposDaInteracaoCorrente.size(); l++) { //achar o grupo do estado que ja pertence, e adicionar o outro.
+											if (gruposDaInteracaoCorrente.get(l).contains(outroEstadoDoGrupo)) {
+												gruposDaInteracaoCorrente.get(l).add(estadoCorrenteAComparar);
+												estadosJaEmGrupo.add(estadoCorrenteAComparar);
+											}
+										}
+									} else if (correnteJaEmGrupo && !outroJaEmGrupo) {
+										for (int l = 0; l < gruposDaInteracaoCorrente.size(); l++) { //achar o grupo do estado que ja pertence, e adicionar o outro.
+											if (gruposDaInteracaoCorrente.get(l).contains(estadoCorrenteAComparar)) {
+												gruposDaInteracaoCorrente.get(l).add(outroEstadoDoGrupo);
+												estadosJaEmGrupo.add(outroEstadoDoGrupo);
+											}
+										}
+									} else if (!correnteJaEmGrupo && !outroJaEmGrupo) {
+										Vector<String> umGrupo = new Vector<String>(); //criar um novo grupo
+										umGrupo.add(estadoCorrenteAComparar); //colocar o estado corrente que não pertencia a grupos, nesse grupo criado
+										umGrupo.add(outroEstadoDoGrupo); //já que são equivalentes, fazer o mesmo procedimento.
+										estadosJaEmGrupo.add(estadoCorrenteAComparar); //dizer que esse estado, agora, pertence a algum grupo
+										estadosJaEmGrupo.add(outroEstadoDoGrupo); //já que são equivalentes, fazer o mesmo procedimento.
+										gruposDaInteracaoCorrente.add(umGrupo); //adicionar o grupo criado na lista de grupos da interação corrente
+									}
+								} else { //estados não equivalentes
+									if(!correnteJaEmGrupo) { //estado corrente ainda não pertence a nenhum grupo, e não é equivalente.
+										Vector<String> umGrupo = new Vector<String>(); //criar um novo grupo
+										umGrupo.add(estadoCorrenteAComparar); //colocar o estado corrente que não pertencia a grupos, nesse grupo criado
+										estadosJaEmGrupo.add(estadoCorrenteAComparar); //dizer que esse estado, agora, pertence a algum grupo
+										gruposDaInteracaoCorrente.add(umGrupo); //adicionar o grupo criado na lista de grupos da interação corrente
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			for (int i = 0; i < gruposDaInteracaoCorrente.size(); i++) {
+				Collections.sort(gruposDaInteracaoCorrente.get(i)); //garante que os estados não vão ficar invertendo, e assim, nunca alcançando o fim por nunca serem equivalentes.
+			}
+			
+			interacoesDeGrupos.add(gruposDaInteracaoCorrente);
+		} while (!interacoesDeGrupos.get(interacoesDeGrupos.size()-1).equals(interacoesDeGrupos.get(interacoesDeGrupos.size()-2))); //repete o laço enquanto houverem mudança nos grupos
+		
+		eliminarEstadoDeErro();
+	}
+
+	
+	private void eliminarEstadoDeErro() {
+		estados.remove(vazio); // remove o estado de erro
+		Vector<String> vetorOpercoesVazio = new Vector<String>(); //recria o estado de operacoes vazias para sincronizar e remover corretamente as operações
 		for (int i = 0; i < alfabeto.size(); i++) {
 			vetorOpercoesVazio.add(vazio);
 		}
-		operacoes.add(vetorOpercoesVazio);
-
-		Vector<String> estadosNFLocais = (Vector<String>)estados.clone();
-		estadosNFLocais.removeAll(estadosFinais);
-		Vector<String> estadosFinaisLocais = (Vector<String>)estadosFinais.clone();
-
-		do {
-			//TODO doing
-		} while (false);
+		operacoes.removeElement(vetorOpercoesVazio); //remove as operacoes de erro do vetor de operacoes
 	}
 
 	/**
@@ -312,20 +418,15 @@ public class ElemLexAutomato extends ElemLex {
 	private void removerEstadosEOperacoesForaDaLista(Vector<String> listaPorPreservar) {
 		Vector<Integer> posicaoDeForasDaLista = new Vector<Integer>();
 		for (int i = 0; i < estados.size(); i++) { //varremos todos os estados
-			boolean foraDaLista = true; //consideramos todos os estados como foras da lista até que seja dito o contrário
-			for (int j = 0; j < listaPorPreservar.size(); j++) {
-				if (estados.get(i).equals(listaPorPreservar.get(j))) { //se o estado está na lista de preservados, avisamos que não é.
-					foraDaLista = false;
-				}
-			}
-			if (foraDaLista) {
+			if (!listaPorPreservar.contains(estados.get(i))) {
 				posicaoDeForasDaLista.add(i);
 			}
 		}
-
 		for (int i = posicaoDeForasDaLista.size()-1; i >= 0; i--) { //remove estados e a lista de opreacoes do maior para o menor para nao tirar da posicao os ainda não verificados.
-			estados.remove(i);
-			operacoes.remove(i);
+			String provavelEstadoFinal = estados.get(posicaoDeForasDaLista.get(i));
+			estados.removeElementAt(posicaoDeForasDaLista.get(i));
+			estadosFinais.remove(provavelEstadoFinal);
+			operacoes.removeElementAt(posicaoDeForasDaLista.get(i));
 		}
 	}
 
