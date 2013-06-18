@@ -214,7 +214,9 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	protected void minimizarAutomato(){
-		// TODO
+		eliminarInalcancaveis();
+		eliminarMortos();
+		eliminarEquivalentes();
 	}
 
 	/**
@@ -276,7 +278,6 @@ public class ElemLexAutomato extends ElemLex {
 
 		removerEstadosEOperacoesForaDaLista(interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size()-1));
 	}
-
 
 	/**
 	 * aplicar a lista de estados finais à primeira posição de interações de não mortos.
