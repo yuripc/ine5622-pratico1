@@ -44,10 +44,15 @@ public abstract class ElemLex implements Cloneable {
 		return null;
 	}
 
-	public ElemLex uniao(ElemLex outroElem) {
-		// TODO Auto-generated method stub
-		System.out.println("não implementado");
-		return null;
+	public Vector<Operacao> uniao(ElemLex elemLexDir) {
+		ElemLexAutomato elemEsq = this.toAutomato();
+		ElemLexAutomato elemDir = elemLexDir.toAutomato();
+		elemEsq.unirAutomatos(elemDir);
+
+		Vector<Operacao> operacoes = new Vector<Operacao>();
+
+		operacoes.add(new Operacao("União", returnToOrigin(elemEsq), true));
+		return operacoes;
 	}
 
 	public ElemLex complemento(ElemLex outroElem) {

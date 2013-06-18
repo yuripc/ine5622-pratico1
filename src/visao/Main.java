@@ -282,9 +282,12 @@ public class Main {
 		mntmUniao.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
-
+				controle.ElemLex elemEsq = criarElem(true);
+				controle.ElemLex elemDir = criarElem(false);
+				if (elemEsq != null && elemDir != null) {
+					new Operacoes(elemEsq.uniao(elemDir));
+				}
+				//TODO doing.
 			}
 		});
 
@@ -332,7 +335,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				controle.ElemLex elem = criarElem(true);
 				if (elem != null) {
-					elem.minimizar();
+					new Operacoes(elem.minimizar());
 				}
 			}
 		});
@@ -390,7 +393,7 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				controle.ElemLex elem = criarElem(false);
 				if (elem != null) {
-					elem.minimizar();
+					new Operacoes(elem.minimizar());
 				}
 			}
 		});

@@ -213,6 +213,7 @@ public class ElemLexAutomato extends ElemLex {
 		}
 	}
 
+	
 	protected void minimizarAutomato(){
 		eliminarInalcancaveis();
 		eliminarMortos();
@@ -251,7 +252,7 @@ public class ElemLexAutomato extends ElemLex {
 		gruposDaPrimeiraInteracao.add(grupoDeEstadosNFLocais);
 		Vector<Vector<Vector<String>>> interacoesDeGrupos = new Vector<Vector<Vector<String>>>(); //cria vetor de armazenamento de interações.
 		interacoesDeGrupos.add(gruposDaPrimeiraInteracao);
-		 int u = 1;
+		
 		do {
 			
 			Vector<Vector<String>> gruposDaInteracaoCorrente = new Vector<Vector<String>>(); //representando o conjunto de grupos da interação corrente.
@@ -587,5 +588,54 @@ public class ElemLexAutomato extends ElemLex {
 		vetor.clear();
 		vetor.addAll(hs);
 		Collections.sort(vetor);
+	}
+
+	private String gerarStringDiferenteDe(Vector<String> stringsAExcluir) {
+	    String alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	    String stringDiferente = "";
+	    
+	    for (int j = -1; j < alfabeto.length(); j++) { //tentar gerar uma string de até tamanho 2 com esse for. 
+		    for (int i = 0; i < alfabeto.length(); i++) {
+		    	if (j == -1) { //tentar primeiro gerar string de tamanho 1 
+			    	if (!stringsAExcluir.contains(alfabeto.charAt(i)+"")) {
+			    		stringDiferente = alfabeto.charAt(i)+"";
+			    		i = alfabeto.length(); //sair do for
+			    		j = alfabeto.length(); //sair do for
+			    	}
+		    	} else { //se não, tentar de tamanho 2.
+		    		if (!stringsAExcluir.contains(alfabeto.charAt(i) + alfabeto.charAt(j) + "")) {
+			    		stringDiferente = alfabeto.charAt(i) + alfabeto.charAt(j) + "";
+			    		i = alfabeto.length(); //sair do for
+			    		j = alfabeto.length(); //sair do for
+			    	}
+		    	}
+		    }
+	    }
+		
+		return stringDiferente;
+	}
+	
+	/**
+	 * GERAL:
+	 * novo estado inicial
+	 * destino do novo estado inicial igual aos destinos dos estados iniciais anteriores.
+	 * 
+	 * PROGRAMAÇÃO:
+	 * criar novo ElemLexAutomato
+	 * eliminar estados conflitantes(dir e esq), por meio de geração de novos estados equivalentes.
+	 * gerar um estado não conflitante com os demais para ser o estado inicial do novo ElemLexAutomato
+	 * direcionar esse novo estado inicial, para as derivações das operações dos antigos estados iniciais.
+	 * 
+	 * @param elemDir
+	 */
+	public void unirAutomatos(ElemLexAutomato outroElem) {
+		// TODO Auto-generated method stub
+		int u = 1;
+		try {
+			ElemLexAutomato novoElemLex = new ElemLexAutomato(""); //TODO
+		} catch (InvalidInputException e) {
+			e.printStackTrace();
+		}
+		
 	}
 }
