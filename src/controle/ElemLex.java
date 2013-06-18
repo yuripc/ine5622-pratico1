@@ -16,38 +16,43 @@ public abstract class ElemLex implements Cloneable {
 		elem.determinizarAutomato();
 
 		Vector<Operacao> operacoes = new Vector<Operacao>();
-		operacoes.add(new Operacao("Determinimização", returnToOrigin(elem), true));
+		operacoes.add(new Operacao("Determinimiza√ß√£o", returnToOrigin(elem), true));
 		return operacoes;
 	}
 
 	public Vector<Operacao> minimizar() {
 		ElemLexAutomato elem = this.toAutomato();
-		// TODO Auto-generated method stub
-		System.out.println("não implementado");
-		return null;
+
+		elem.minimizarAutomato();
+
+		Vector<Operacao> operacoes = new Vector<Operacao>();
+
+		operacoes.add(new Operacao("Minimiza√ß√£o", returnToOrigin(elem), true));
+		return operacoes;
 	}
+
 
 	public boolean reconhecerSentenca(String s) {
 		// TODO Auto-generated method stub
-		System.out.println("não implementado");
+		System.out.println("nÔøΩo implementado");
 		return false;
 	}
 
 	public String[] gerarSentencas(int n) {
 		// TODO Auto-generated method stub
-		System.out.println("não implementado");
+		System.out.println("nÔøΩo implementado");
 		return null;
 	}
 
 	public ElemLex uniao(ElemLex outroElem) {
 		// TODO Auto-generated method stub
-		System.out.println("não implementado");
+		System.out.println("nÔøΩo implementado");
 		return null;
 	}
 
 	public ElemLex complemento(ElemLex outroElem) {
 		// TODO Auto-generated method stub
-		System.out.println("não implementado");
+		System.out.println("nÔøΩo implementado");
 		return null;
 	}
 
@@ -61,17 +66,17 @@ public abstract class ElemLex implements Cloneable {
 
 	protected boolean isEstadoValido(String estado) throws InvalidInputException {
 		if (!estado.matches("[A-Z][a-z0-9]{" + (estado.length() - 1) + "}")) {
-			throw new InvalidInputException("Estado deve conter uma letra maiúscula seguida de 0 ou mais letras e/ou dígitos");
+			throw new InvalidInputException("Estado deve conter uma letra maiÔøΩscula seguida de 0 ou mais letras e/ou dÔøΩgitos");
 		}
 		return true;
 	}
 
 	protected boolean isEntradaValida(String entrada) throws InvalidInputException {
 		if (entrada.length() > 1) {
-			throw new InvalidInputException("Caractere de entrada deve ser um único caractere");
+			throw new InvalidInputException("Caractere de entrada deve ser um ÔøΩnico caractere");
 		}
 		if (!entrada.matches("[a-z0-9]")) {
-			throw new InvalidInputException("Caractere de entrada só pode ser letra minuscula ou digito");
+			throw new InvalidInputException("Caractere de entrada sÔøΩ pode ser letra minuscula ou digito");
 		}
 		return true;
 	}

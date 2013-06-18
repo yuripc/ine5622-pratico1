@@ -56,7 +56,7 @@ public class ElemLexAutomato extends ElemLex {
 			if (!((coluna0.length() == 3 && coluna0.contains("*") && coluna0.contains("->")) || (coluna0.length() == 2 && coluna0.contains("->"))
 					|| (coluna0.length() == 1 && coluna0.contains("*")) || (coluna0.length() == 0))) {
 
-				throw new InvalidInputException("Apenas '->' ou '*' s�o v�lidos", linha, 0);
+				throw new InvalidInputException("Apenas '->' ou '*' s�o v�lidos", linha, 0);
 			}
 		}
 
@@ -109,9 +109,9 @@ public class ElemLexAutomato extends ElemLex {
 							}
 						} else {
 							if (transicao.equals(vazio)) {
-								throw new InvalidInputException(vazio + " n�o pode ser usado junto a outros estados", linha, coluna);
+								throw new InvalidInputException(vazio + " n�o pode ser usado junto a outros estados", linha, coluna);
 							} else if (transicao.trim().length() > 0) {
-								throw new InvalidInputException("Estado " + transicao + " n�o definido", linha, coluna);
+								throw new InvalidInputException("Estado " + transicao + " n�o definido", linha, coluna);
 							}
 						}
 					}
@@ -210,6 +210,121 @@ public class ElemLexAutomato extends ElemLex {
 
 		for (int linha = 0; linha < estados.size(); linha++) {
 			estados.set(linha, estadosNormalizados.get(linha));
+		}
+	}
+
+	protected void minimizarAutomato(){
+		// TODO
+	}
+
+	/**
+	 * adicionar estado de erro. ( assumindo que seja "-" - vazio. )
+	 * trocar derivações vazias para derivações para estados de erro
+	 * agrupar estados finais/agrupar estados não finais(incluindo estado de erro)
+	 * ...+
+	 */
+	private void eliminarEquivalentes() {
+		// TODO Auto-generated method stub
+
+		estados.add(vazio);
+		Vector<String> vetorOpercoesVazio = new Vector<String>();
+		for (int i = 0; i < alfabeto.size(); i++) {
+			vetorOpercoesVazio.add(vazio);
+		}
+		operacoes.add(vetorOpercoesVazio);
+
+		Vector<String> estadosNFLocais = (Vector<String>)estados.clone();
+		estadosNFLocais.removeAll(estadosFinais);
+		Vector<String> estadosFinaisLocais = (Vector<String>)estadosFinais.clone();
+
+		do {
+			//TODO doing
+		} while (false);
+	}
+
+	/**
+	 * pegar estado inicial e adicionar à lista de alcançaveis.
+	 * pegar derivados da lista de alcançaveis e adicionar à lista de alcançaveis.
+	 * aplicar recursivamente o passo 2 até que não sejam mais adicionados novos à lista.
+	 * remover estados que nao pertencem a lista.
+	 */
+	private void eliminarInalcancaveis() {
+		Vector<Vector<String>> interacoesDeAlcancaveis = new Vector<Vector<String>>();
+		Vector<String> vetorInicial = new Vector<String>();
+		vetorInicial.add(estadoInicial);
+		interacoesDeAlcancaveis.add(vetorInicial);
+
+		do {
+			Vector<String> novaInteracao = new Vector<String>();
+			novaInteracao.addAll((Vector<String>)interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size()-1).clone());
+
+			for (int i = 0; i < novaInteracao.size(); i++) { //pegue cada um dos membros do vetor da ultima interacao com os considerados alcançaveis
+				for (int j = 0; j < estados.size(); j++) { //pegue cada um dos membros do vetor de estados
+					if (estados.get(j).equals(novaInteracao.get(i))) { //pegar a posicao do estado, da lista de estados (o 'j')
+						for (int k = 0; k < operacoes.get(j).size(); k++) { //pegar a lista de operações que o estado(j) permite derivar
+							if (novaInteracao.indexOf(operacoes.get(j).get(k)) == -1) { // se a derivação ainda não pertencer à lista da novaInteracao
+								novaInteracao.add(operacoes.get(j).get(k)); //adicionar ao vetor da novaInteracao
+							}
+						}
+					}
+				}
+			}
+
+			interacoesDeAlcancaveis.add(novaInteracao);
+
+		} while (!interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size()-1).equals(interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size()-2))); // continuar enquanto ainda estiverem sendo adicionados estados a cada interação
+
+		removerEstadosEOperacoesForaDaLista(interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size()-1));
+	}
+
+
+	/**
+	 * aplicar a lista de estados finais à primeira posição de interações de não mortos.
+	 * a partir dos outros estados, marcar como nao morto os estados que alcançam estados nao mortos da fase anterior
+	 * aplicar recursivamente o passo 2 até que nao haja mudanças da penultima interação para a ultima
+	 * remover estados que nao pertencem à lista.
+	 */
+	private void eliminarMortos() {
+		Vector<Vector<String>> interacoesDeNaoMortos = new Vector<Vector<String>>();
+		interacoesDeNaoMortos.add(estadosFinais);
+
+		do { //encontra quais são não mortos.
+			Vector<String> novaInteracao = new Vector<String>();
+			novaInteracao.addAll((Vector<String>)interacoesDeNaoMortos.get(interacoesDeNaoMortos.size()-1).clone()); //adiciona condição pré-estabelecida da ultima interação, para ser avaliada na interação corrente.
+			for (int i = 0; i < operacoes.size(); i++) { //varre as operações e resgata os lados esquerdos que direcionam ao estados finais da ULTIMA interação feita.
+				for (int j = 0; j < operacoes.get(i).size(); j++) { //varre as colunas direcionadas dos não terminais
+					for (int k = 0; k < novaInteracao.size(); k++) { //pega a nova interacao e varre seus nao mortos
+						if (operacoes.get(i).get(j).equals(novaInteracao.get(k))) { //se algum não-terminal direcionar a algum não-terminal que já esteja na lista de não mortos
+							if (novaInteracao.indexOf(estados.get(i)) == -1) { //verifica se já está na lista.
+								novaInteracao.add(estados.get(i)); //adiciona o não-terminal que deriva para um não morto à nova lista de não terminais da interação.
+							}
+						}
+					}
+				}
+			}
+			interacoesDeNaoMortos.add(novaInteracao);
+		} while (!interacoesDeNaoMortos.get(interacoesDeNaoMortos.size()-1).equals(interacoesDeNaoMortos.get(interacoesDeNaoMortos.size()-2))); // verifica se a interação anterior foi igual a corrente. se sim, não houve progresso na avaliação e é considerado FINALIZADO.
+
+		removerEstadosEOperacoesForaDaLista(interacoesDeNaoMortos.get(interacoesDeNaoMortos.size()-1));
+	}
+
+	private void removerEstadosEOperacoesForaDaLista(Vector<String> listaPorPreservar) {
+		Vector<Integer> posicaoDeForasDaLista = new Vector<Integer>();
+		for (int i = 0; i < estados.size(); i++) { //varremos todos os estados
+			boolean foraDaLista = true; //consideramos todos os estados como foras da lista até que seja dito o contrário
+			for (int j = 0; j < listaPorPreservar.size(); j++) {
+				if (estados.get(i).equals(listaPorPreservar.get(j))) { //se o estado está na lista de preservados, avisamos que não é.
+					foraDaLista = false;
+				}
+			}
+			if (foraDaLista) {
+				posicaoDeForasDaLista.add(i);
+			}
+		}
+
+		for (int i = posicaoDeForasDaLista.size()-1; i >= 0; i--) { //remove estados e a lista de opreacoes do maior para o menor para nao tirar da posicao os ainda não verificados.
+			estados.remove(i);
+			operacoes.remove(i);
 		}
 	}
 
@@ -325,7 +440,7 @@ public class ElemLexAutomato extends ElemLex {
 	@Override
 	public Vector<Operacao> converter() {
 		Vector<Operacao> operacoes = new Vector<Operacao>();
-		operacoes.add(new Operacao("Convers�o para GR", toGR(), true));
+		operacoes.add(new Operacao("Convers�o para GR", toGR(), true));
 		return operacoes;
 	}
 
