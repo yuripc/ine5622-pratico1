@@ -10,25 +10,20 @@ public abstract class ElemLex implements Cloneable {
 
 	String estadoInicial;
 
-	public Vector<Operacao> determinizar() {
+	public Operacao determinizar() {
 		ElemLexAutomato elem = toAutomato();
 
 		elem.determinizarAutomato();
 
-		Vector<Operacao> operacoes = new Vector<Operacao>();
-		operacoes.add(new Operacao("Determinimização", returnToOrigin(elem), true));
-		return operacoes;
+		return new Operacao("Determinimização", returnToOrigin(elem));
 	}
 
-	public Vector<Operacao> minimizar() {
+	public Operacao minimizar() {
 		ElemLexAutomato elem = this.toAutomato();
 
 		elem.minimizarAutomato();
 
-		Vector<Operacao> operacoes = new Vector<Operacao>();
-
-		operacoes.add(new Operacao("Minimização", returnToOrigin(elem), true));
-		return operacoes;
+		return new Operacao("Minimização", returnToOrigin(elem));
 	}
 
 
@@ -44,18 +39,16 @@ public abstract class ElemLex implements Cloneable {
 		return null;
 	}
 
-	public Vector<Operacao> uniao(ElemLex elemLexDir) {
+	public Operacao uniao(ElemLex elemLexDir) {
 		ElemLexAutomato elemEsq = this.toAutomato();
 		ElemLexAutomato elemDir = elemLexDir.toAutomato();
+
 		elemEsq.unirAutomatos(elemDir);
 
-		Vector<Operacao> operacoes = new Vector<Operacao>();
-
-		operacoes.add(new Operacao("União", returnToOrigin(elemEsq), true));
-		return operacoes;
+		return new Operacao("União", returnToOrigin(elemEsq));
 	}
 
-	public ElemLex complemento(ElemLex outroElem) {
+	public Operacao complemento(ElemLex outroElem) {
 		// TODO Auto-generated method stub
 		System.out.println("não implementado");
 		return null;
@@ -90,6 +83,6 @@ public abstract class ElemLex implements Cloneable {
 
 	public abstract ElemLexAutomato toAutomato();
 
-	public abstract Vector<Operacao> converter();
+	public abstract Operacao converter();
 
 }

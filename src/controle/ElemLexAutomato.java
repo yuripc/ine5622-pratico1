@@ -213,14 +213,14 @@ public class ElemLexAutomato extends ElemLex {
 		}
 	}
 
-	
+
 	protected void minimizarAutomato(){
 		eliminarInalcancaveis();
 		eliminarMortos();
 		eliminarEquivalentes();
 	}
 
-	
+
 	private void adicionarEstadoDeErro() {
 		estados.add(vazio); //adiciona um estado de erro ao final do automato.
 		Vector<String> vetorOpercoesVazio = new Vector<String>(); //operacoes do estado de erro
@@ -229,19 +229,19 @@ public class ElemLexAutomato extends ElemLex {
 		}
 		operacoes.add(vetorOpercoesVazio); //adiciona ao final(ultima posicao) do vetor de operacoes, sincronizando com o ultimo estado adicionado(de erro) na primeira linha do método.
 	}
-	
-	
+
+
 	/**
 	 * adicionar estado de erro. ( assumindo que seja "-" - vazio. )
 	 * trocar derivações vazias para derivações para estados de erro
 	 * agrupar estados finais/agrupar estados não finais(incluindo estado de erro)
-	 * pegar todos os estados de um grupo, um de cada vez, e definir: 
+	 * pegar todos os estados de um grupo, um de cada vez, e definir:
 	 * *se seus destinos pertencem ao mesmo grupo: deixar no mesmo grupo.
 	 * *se seus destinos pertencerem a grupos diferentes: coloca-los em grupos diferentes.
 	 * aplicar recursivamente o passo 4 5 e 6.
 	 */
 	private void eliminarEquivalentes() {
-		adicionarEstadoDeErro(); 
+		adicionarEstadoDeErro();
 		@SuppressWarnings("unchecked")
 		Vector<String> grupoDeEstadosNFLocais = (Vector<String>)estados.clone(); //cria vetor de strings representando grupo de estados de não finais
 		grupoDeEstadosNFLocais.removeAll(estadosFinais);
@@ -252,12 +252,12 @@ public class ElemLexAutomato extends ElemLex {
 		gruposDaPrimeiraInteracao.add(grupoDeEstadosNFLocais);
 		Vector<Vector<Vector<String>>> interacoesDeGrupos = new Vector<Vector<Vector<String>>>(); //cria vetor de armazenamento de interações.
 		interacoesDeGrupos.add(gruposDaPrimeiraInteracao);
-		
+
 		do {
-			
+
 			Vector<Vector<String>> gruposDaInteracaoCorrente = new Vector<Vector<String>>(); //representando o conjunto de grupos da interação corrente.
 			Vector<String> estadosJaEmGrupo = new Vector<String>(); //vetor a nível de facilitar verificações posteriores.
-		
+
 			for (int i = 0; i < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).size(); i++) { //pega a quantidade de grupos da ultima interação registrada.
 				for (int j = 0; j < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size(); j++) { //pega um grupo da ultima interação registrada;
 					for (int k = 0; k < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size(); k++) { //pega um dos estados
@@ -271,10 +271,10 @@ public class ElemLexAutomato extends ElemLex {
 								estadosJaEmGrupo.add(estadoCorrenteAComparar); //dizer que esse estado, agora, pertence a algum grupo
 								gruposDaInteracaoCorrente.add(umGrupo); //adicionar o grupo criado na lista de grupos da interação corrente
 							} if (!outroEstadoDoGrupo.equals(estadoCorrenteAComparar)) {//permanesce no laço se não for o estado corrente a comparar
-								
+
 								Vector<String> operacoesDoCorrente = operacoes.get(estados.indexOf(estadoCorrenteAComparar)); //pega operacoes do estado corrente a comparar
 								Vector<String> operacoesDoOutro = operacoes.get(estados.indexOf(outroEstadoDoGrupo)); //pega operacoes de outroEstadoDoGrupo
-								
+
 								boolean estadosEquivalentes = true;
 								boolean contemUm = false;
 								boolean contemOutro = false;
@@ -291,10 +291,10 @@ public class ElemLexAutomato extends ElemLex {
 										}
 									}
 								}
-								
+
 								boolean correnteJaEmGrupo = estadosJaEmGrupo.contains(estadoCorrenteAComparar);
 								boolean outroJaEmGrupo = estadosJaEmGrupo.contains(outroEstadoDoGrupo);
-								
+
 								if (estadosEquivalentes) { //caso forem estados equivalentes
 									if (!correnteJaEmGrupo && outroJaEmGrupo) {
 										for (int l = 0; l < gruposDaInteracaoCorrente.size(); l++) { //achar o grupo do estado que ja pertence, e adicionar o outro.
@@ -334,14 +334,14 @@ public class ElemLexAutomato extends ElemLex {
 			for (int i = 0; i < gruposDaInteracaoCorrente.size(); i++) {
 				Collections.sort(gruposDaInteracaoCorrente.get(i)); //garante que os estados não vão ficar invertendo, e assim, nunca alcançando o fim por nunca serem equivalentes.
 			}
-			
+
 			interacoesDeGrupos.add(gruposDaInteracaoCorrente);
 		} while (!interacoesDeGrupos.get(interacoesDeGrupos.size()-1).equals(interacoesDeGrupos.get(interacoesDeGrupos.size()-2))); //repete o laço enquanto houverem mudança nos grupos
-		
+
 		eliminarEstadoDeErro();
 	}
 
-	
+
 	private void eliminarEstadoDeErro() {
 		estados.remove(vazio); // remove o estado de erro
 		Vector<String> vetorOpercoesVazio = new Vector<String>(); //recria o estado de operacoes vazias para sincronizar e remover corretamente as operações
@@ -541,10 +541,8 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	@Override
-	public Vector<Operacao> converter() {
-		Vector<Operacao> operacoes = new Vector<Operacao>();
-		operacoes.add(new Operacao("Conversão para GR", toGR(), true));
-		return operacoes;
+	public Operacao converter() {
+		return new Operacao("Conversão para GR", toGR());
 	}
 
 	@Override
@@ -591,30 +589,30 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	private String gerarStringDiferenteDe(Vector<String> stringsAExcluir) {
-	    String alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	    String stringDiferente = "";
-	    
-	    for (int j = -1; j < alfabeto.length(); j++) { //tentar gerar uma string de até tamanho 2 com esse for. 
-		    for (int i = 0; i < alfabeto.length(); i++) {
-		    	if (j == -1) { //tentar primeiro gerar string de tamanho 1 
-			    	if (!stringsAExcluir.contains(alfabeto.charAt(i)+"")) {
-			    		stringDiferente = alfabeto.charAt(i)+"";
-			    		i = alfabeto.length(); //sair do for
-			    		j = alfabeto.length(); //sair do for
-			    	}
-		    	} else { //se não, tentar de tamanho 2.
-		    		if (!stringsAExcluir.contains(alfabeto.charAt(i) + alfabeto.charAt(j) + "")) {
-			    		stringDiferente = alfabeto.charAt(i) + alfabeto.charAt(j) + "";
-			    		i = alfabeto.length(); //sair do for
-			    		j = alfabeto.length(); //sair do for
-			    	}
-		    	}
-		    }
-	    }
-		
+		String alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		String stringDiferente = "";
+
+		for (int j = -1; j < alfabeto.length(); j++) { //tentar gerar uma string de até tamanho 2 com esse for.
+			for (int i = 0; i < alfabeto.length(); i++) {
+				if (j == -1) { //tentar primeiro gerar string de tamanho 1
+					if (!stringsAExcluir.contains(alfabeto.charAt(i)+"")) {
+						stringDiferente = alfabeto.charAt(i)+"";
+						i = alfabeto.length(); //sair do for
+						j = alfabeto.length(); //sair do for
+					}
+				} else { //se não, tentar de tamanho 2.
+					if (!stringsAExcluir.contains(alfabeto.charAt(i) + alfabeto.charAt(j) + "")) {
+						stringDiferente = alfabeto.charAt(i) + alfabeto.charAt(j) + "";
+						i = alfabeto.length(); //sair do for
+						j = alfabeto.length(); //sair do for
+					}
+				}
+			}
+		}
+
 		return stringDiferente;
 	}
-	
+
 	/**
 	 * GERAL:
 	 * novo estado inicial
@@ -636,6 +634,6 @@ public class ElemLexAutomato extends ElemLex {
 		} catch (InvalidInputException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 }

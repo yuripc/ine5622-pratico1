@@ -122,10 +122,8 @@ public class ElemLexGR extends ElemLex {
 	}
 
 	@Override
-	public Vector<Operacao> converter() {
-		Vector<Operacao> operacoes = new Vector<Operacao>();
-		operacoes.add(new Operacao("Conversão para Automato", toAutomato(), true));
-		return operacoes;
+	public Operacao converter() {
+		return new Operacao("Conversão para Automato", toAutomato());
 	}
 
 	@Override
