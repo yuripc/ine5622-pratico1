@@ -132,12 +132,12 @@ public class ElemLexGR extends ElemLex {
 		Vector<Vector<String>> novoVetorDeOperacoes = new Vector<Vector<String>>(); //cria novo vetor vazio
 		for (int i = 0; i < estados.size(); i++) {
 			novoVetorDeOperacoes.add(new Vector<String>()); //cria uma quantidade de vetores igual ao numero de estados existentes(referentes a cada operação de cada estado)
-			
 		}
 		
-		for (int i = 0; i < operacoes.size(); i++) {
-			for (int j = 0; j < operacoes.get(i).size(); j++) {
-				for (int k = 0; k < alfabeto.size(); k++) {
+		for (int i = 0; i < operacoes.size(); i++) {//operacoes de um estado do automato
+			Vector<String> operacoesDoEstado = new Vector<String>();
+			for (int k = 0; k < alfabeto.size(); k++) { // cada uma letra do alfabeto.
+				for (int j = 0; j < operacoes.get(i).size(); j++) { //cada uma das operações do estado do automato
 					if (alfabeto.get(k).equals(operacoes.get(i).get(j).charAt(0))) {
 						
 					}
