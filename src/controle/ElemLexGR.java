@@ -190,7 +190,6 @@ public class ElemLexGR extends ElemLex {
 		try {
 			return new ElemLexAutomato(sb.toString());
 		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}

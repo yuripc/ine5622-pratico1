@@ -229,7 +229,6 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	protected boolean ehSentencaLinguagem(String s) {
-		//TODO
 		determinizarAutomato();
 
 		String estadoAtual = estadoInicial;
