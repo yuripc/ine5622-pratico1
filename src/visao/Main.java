@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -358,7 +359,7 @@ public class Main {
 		mntmA1GerarSentencas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gerarSentenca(true);
+				gerarSentencas(true);
 			}
 		});
 
@@ -426,7 +427,7 @@ public class Main {
 		mntmA2GerarSentencas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gerarSentenca(false);
+				gerarSentencas(false);
 			}
 		});
 
@@ -536,7 +537,7 @@ public class Main {
 	}
 
 	private static void reconhecerSentenca(boolean esquerda) {
-		controle.ElemLex elem = criarElem(true);
+		controle.ElemLex elem = criarElem(esquerda);
 		if (elem != null) {
 			String input = dialogInput("Qual sentença deseja verificar?");
 
@@ -548,7 +549,7 @@ public class Main {
 		}
 	}
 
-	private static void gerarSentenca(boolean esquerda) {
+	private static void gerarSentencas(boolean esquerda) {
 		controle.ElemLex elem = criarElem(esquerda);
 		if (elem != null) {
 			int input = Integer.parseInt(dialogInput("Qual o tamanho das sentença?"));
@@ -557,6 +558,7 @@ public class Main {
 			if (sentencas.size() == 0 || sentencas == null) {
 				messageError("Não existe sentença com esse tamanho");
 			} else {
+				Collections.sort(sentencas);
 				StringBuilder sb = new StringBuilder("sentenças de tamanho " + input + ": " + sentencas.size() + "\n");
 				for (String sentenca: sentencas) {
 					sb.append("- " + sentenca + "\n");

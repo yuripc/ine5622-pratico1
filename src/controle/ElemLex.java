@@ -26,31 +26,16 @@ public abstract class ElemLex implements Cloneable {
 		return new Operacao("Minimização", returnToOrigin(elem));
 	}
 
-
 	public boolean reconhecerSentenca(String s) {
-		// TODO Auto-generated method stub
 		ElemLexAutomato elem = this.toAutomato();
 
-		String resultado;
-		if(elem.ehSentencaLinguagem(s)){
-			resultado = "";
-		} else{
-			resultado = "";
-		}
-
-		System.out.println("não implementado");
-		return false;
+		return elem.ehSentencaLinguagem(s);
 	}
 
 	public Vector<String> gerarSentencas(int n) {
-		// TODO Auto-generated method stub
-
 		ElemLexAutomato elem = this.toAutomato();
 
-		elem.gerarSentencasValidas(n);
-
-		System.out.println("não implementado");
-		return null;
+		return elem.gerarSentencasValidas(n);
 	}
 
 	public Operacao uniao(ElemLex elemLexDir) {

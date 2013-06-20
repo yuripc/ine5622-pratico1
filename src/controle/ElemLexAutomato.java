@@ -208,21 +208,39 @@ public class ElemLexAutomato extends ElemLex {
 			}
 		}
 
+		for (int linha = 0; linha < estadosFinais.size(); linha++) {
+			String estado = estadosFinais.get(linha);
+			estadosFinais.set(linha, estadosNormalizados.get(estados.indexOf(estado)));
+		}
+
 		for (int linha = 0; linha < estados.size(); linha++) {
 			estados.set(linha, estadosNormalizados.get(linha));
 		}
+
+
+
 	}
 
-
-	protected void minimizarAutomato(){
+	protected void minimizarAutomato() {
+		determinizarAutomato();
 		eliminarInalcancaveis();
 		eliminarMortos();
 		eliminarEquivalentes();
 	}
 
-	protected boolean ehSentencaLinguagem(String s){
+	protected boolean ehSentencaLinguagem(String s) {
 		//TODO
-		return false;
+		determinizarAutomato();
+
+		String estadoAtual = estadoInicial;
+		for (int i = 0; i < s.length(); i++) {
+			estadoAtual = proximoEstado(estadoAtual, s.charAt(i));
+			if (estadoAtual.equals(vazio)) {
+				return false;
+			}
+		}
+
+		return estadosFinais.contains(estadoAtual);
 	}
 
 	protected Vector<String> gerarSentencasValidas(int tamanho) {
@@ -230,8 +248,8 @@ public class ElemLexAutomato extends ElemLex {
 		Vector<String> sentencasValidas = new Vector<String>();
 		Vector<String> permutacoes = permutar(tamanho);
 
-		for(String permutacao : permutacoes){
-			if(ehSentencaLinguagem(permutacao)){
+		for (String permutacao : permutacoes) {
+			if (ehSentencaLinguagem(permutacao)) {
 				sentencasValidas.add(permutacao);
 			}
 		}
@@ -241,20 +259,19 @@ public class ElemLexAutomato extends ElemLex {
 
 	private Vector<String> permutar(int tamanho) {
 		Vector<String> resultado = new Vector<String>();
-		permutar(tamanho,"",resultado);
+		permutar(tamanho, "", resultado);
 		return resultado;
 	}
 
 	private void permutar(int tamanho, String atual, Vector<String> resultados) {
-		if(atual.length()==tamanho){
+		if (atual.length() == tamanho) {
 			resultados.add(atual);
 		} else {
 			for (int i = 0; i < alfabeto.size(); i++) {
-				permutar(tamanho,atual+alfabeto.get(i), resultados);
+				permutar(tamanho, atual + alfabeto.get(i), resultados);
 			}
 		}
 	}
-
 
 	private void adicionarEstadoDeErro() {
 		estados.add(vazio); //adiciona um estado de erro ao final do automato.
@@ -265,23 +282,22 @@ public class ElemLexAutomato extends ElemLex {
 		operacoes.add(vetorOpercoesVazio); //adiciona ao final(ultima posicao) do vetor de operacoes, sincronizando com o ultimo estado adicionado(de erro) na primeira linha do método.
 	}
 
-
 	/**
-	 * adicionar estado de erro. ( assumindo que seja "-" - vazio. )
-	 * trocar derivações vazias para derivações para estados de erro
-	 * agrupar estados finais/agrupar estados não finais(incluindo estado de erro)
-	 * pegar todos os estados de um grupo, um de cada vez, e definir:
-	 * *se seus destinos pertencem ao mesmo grupo: deixar no mesmo grupo.
-	 * *se seus destinos pertencerem a grupos diferentes: coloca-los em grupos diferentes.
-	 * aplicar recursivamente o passo 4 5 e 6.
+	 * adicionar estado de erro. ( assumindo que seja "-" - vazio. ) trocar
+	 * derivações vazias para derivações para estados de erro agrupar estados
+	 * finais/agrupar estados não finais(incluindo estado de erro) pegar todos
+	 * os estados de um grupo, um de cada vez, e definir: *se seus destinos
+	 * pertencem ao mesmo grupo: deixar no mesmo grupo. *se seus destinos
+	 * pertencerem a grupos diferentes: coloca-los em grupos diferentes. aplicar
+	 * recursivamente o passo 4 5 e 6.
 	 */
 	private void eliminarEquivalentes() {
 		adicionarEstadoDeErro();
 		@SuppressWarnings("unchecked")
-		Vector<String> grupoDeEstadosNFLocais = (Vector<String>)estados.clone(); //cria vetor de strings representando grupo de estados de não finais
+		Vector<String> grupoDeEstadosNFLocais = (Vector<String>) estados.clone(); //cria vetor de strings representando grupo de estados de não finais
 		grupoDeEstadosNFLocais.removeAll(estadosFinais);
 		@SuppressWarnings("unchecked")
-		Vector<String> grupoDeEstadosFinaisLocais = (Vector<String>)estadosFinais.clone(); //cria vetor de strings representando grupo de estados de finais
+		Vector<String> grupoDeEstadosFinaisLocais = (Vector<String>) estadosFinais.clone(); //cria vetor de strings representando grupo de estados de finais
 		Vector<Vector<String>> gruposDaPrimeiraInteracao = new Vector<Vector<String>>(); //cria vetor armazenando os grupos de vetores de strings
 		gruposDaPrimeiraInteracao.add(grupoDeEstadosFinaisLocais);
 		gruposDaPrimeiraInteracao.add(grupoDeEstadosNFLocais);
@@ -293,19 +309,20 @@ public class ElemLexAutomato extends ElemLex {
 			Vector<Vector<String>> gruposDaInteracaoCorrente = new Vector<Vector<String>>(); //representando o conjunto de grupos da interação corrente.
 			Vector<String> estadosJaEmGrupo = new Vector<String>(); //vetor a nível de facilitar verificações posteriores.
 
-			for (int i = 0; i < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).size(); i++) { //pega a quantidade de grupos da ultima interação registrada.
-				for (int j = 0; j < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size(); j++) { //pega um grupo da ultima interação registrada;
-					for (int k = 0; k < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size(); k++) { //pega um dos estados
-						for (int o = 0; o < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size(); o++) { //pega outro estado
-							String estadoCorrenteAComparar = interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).get(o);
-							String outroEstadoDoGrupo = interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).get(k);
+			for (int i = 0; i < interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).size(); i++) { //pega a quantidade de grupos da ultima interação registrada.
+				for (int j = 0; j < interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).get(i).size(); j++) { //pega um grupo da ultima interação registrada;
+					for (int k = 0; k < interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).get(i).size(); k++) { //pega um dos estados
+						for (int o = 0; o < interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).get(i).size(); o++) { //pega outro estado
+							String estadoCorrenteAComparar = interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).get(i).get(o);
+							String outroEstadoDoGrupo = interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).get(i).get(k);
 
-							if (interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(i).size() == 1) { //já que o grupo contém somente ele mesmo, não haverá o que comprar. então, adicione-o
+							if (interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).get(i).size() == 1) { //já que o grupo contém somente ele mesmo, não haverá o que comprar. então, adicione-o
 								Vector<String> umGrupo = new Vector<String>(); //criar um novo grupo
 								umGrupo.add(estadoCorrenteAComparar); //colocar o estado corrente que não pertencia a grupos, nesse grupo criado
 								estadosJaEmGrupo.add(estadoCorrenteAComparar); //dizer que esse estado, agora, pertence a algum grupo
 								gruposDaInteracaoCorrente.add(umGrupo); //adicionar o grupo criado na lista de grupos da interação corrente
-							} if (!outroEstadoDoGrupo.equals(estadoCorrenteAComparar)) {//permanesce no laço se não for o estado corrente a comparar
+							}
+							if (!outroEstadoDoGrupo.equals(estadoCorrenteAComparar)) {//permanesce no laço se não for o estado corrente a comparar
 
 								Vector<String> operacoesDoCorrente = operacoes.get(estados.indexOf(estadoCorrenteAComparar)); //pega operacoes do estado corrente a comparar
 								Vector<String> operacoesDoOutro = operacoes.get(estados.indexOf(outroEstadoDoGrupo)); //pega operacoes de outroEstadoDoGrupo
@@ -313,12 +330,12 @@ public class ElemLexAutomato extends ElemLex {
 								boolean estadosEquivalentes = true;
 								boolean contemUm = false;
 								boolean contemOutro = false;
-								for (int l = 0; l < interacoesDeGrupos.get(interacoesDeGrupos.size()-1).size(); l++) { //pega a quantidade de grupos da ultima interação registrada.
+								for (int l = 0; l < interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).size(); l++) { //pega a quantidade de grupos da ultima interação registrada.
 									for (int m = 0; m < operacoesDoCorrente.size(); m++) { //varre cada estado das operacoes do corrente(e do outro estado comparado)
-										if (interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(l).contains(operacoesDoCorrente.get(m))) {
+										if (interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).get(l).contains(operacoesDoCorrente.get(m))) {
 											contemUm = true;
 										}
-										if(interacoesDeGrupos.get(interacoesDeGrupos.size()-1).get(l).contains(operacoesDoOutro.get(m))) {
+										if (interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).get(l).contains(operacoesDoOutro.get(m))) {
 											contemOutro = true;
 										}
 										if (contemUm != contemOutro) {
@@ -354,7 +371,7 @@ public class ElemLexAutomato extends ElemLex {
 										gruposDaInteracaoCorrente.add(umGrupo); //adicionar o grupo criado na lista de grupos da interação corrente
 									}
 								} else { //estados não equivalentes
-									if(!correnteJaEmGrupo) { //estado corrente ainda não pertence a nenhum grupo, e não é equivalente.
+									if (!correnteJaEmGrupo) { //estado corrente ainda não pertence a nenhum grupo, e não é equivalente.
 										Vector<String> umGrupo = new Vector<String>(); //criar um novo grupo
 										umGrupo.add(estadoCorrenteAComparar); //colocar o estado corrente que não pertencia a grupos, nesse grupo criado
 										estadosJaEmGrupo.add(estadoCorrenteAComparar); //dizer que esse estado, agora, pertence a algum grupo
@@ -371,11 +388,10 @@ public class ElemLexAutomato extends ElemLex {
 			}
 
 			interacoesDeGrupos.add(gruposDaInteracaoCorrente);
-		} while (!interacoesDeGrupos.get(interacoesDeGrupos.size()-1).equals(interacoesDeGrupos.get(interacoesDeGrupos.size()-2))); //repete o laço enquanto houverem mudança nos grupos
+		} while (!interacoesDeGrupos.get(interacoesDeGrupos.size() - 1).equals(interacoesDeGrupos.get(interacoesDeGrupos.size() - 2))); //repete o laço enquanto houverem mudança nos grupos
 
 		eliminarEstadoDeErro();
 	}
-
 
 	private void eliminarEstadoDeErro() {
 		estados.remove(vazio); // remove o estado de erro
@@ -387,10 +403,10 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	/**
-	 * pegar estado inicial e adicionar à lista de alcançaveis.
-	 * pegar derivados da lista de alcançaveis e adicionar à lista de alcançaveis.
-	 * aplicar recursivamente o passo 2 até que não sejam mais adicionados novos à lista.
-	 * remover estados que nao pertencem a lista.
+	 * pegar estado inicial e adicionar à lista de alcançaveis. pegar derivados
+	 * da lista de alcançaveis e adicionar à lista de alcançaveis. aplicar
+	 * recursivamente o passo 2 até que não sejam mais adicionados novos à
+	 * lista. remover estados que nao pertencem a lista.
 	 */
 	@SuppressWarnings("unchecked")
 	private void eliminarInalcancaveis() {
@@ -401,7 +417,7 @@ public class ElemLexAutomato extends ElemLex {
 
 		do {
 			Vector<String> novaInteracao = new Vector<String>();
-			novaInteracao.addAll((Vector<String>)interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size()-1).clone());
+			novaInteracao.addAll((Vector<String>) interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size() - 1).clone());
 
 			for (int i = 0; i < novaInteracao.size(); i++) { //pegue cada um dos membros do vetor da ultima interacao com os considerados alcançaveis
 				for (int j = 0; j < estados.size(); j++) { //pegue cada um dos membros do vetor de estados
@@ -417,15 +433,16 @@ public class ElemLexAutomato extends ElemLex {
 
 			interacoesDeAlcancaveis.add(novaInteracao);
 
-		} while (!interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size()-1).equals(interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size()-2))); // continuar enquanto ainda estiverem sendo adicionados estados a cada interação
+		} while (!interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size() - 1).equals(interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size() - 2))); // continuar enquanto ainda estiverem sendo adicionados estados a cada interação
 
-		removerEstadosEOperacoesForaDaLista(interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size()-1));
+		removerEstadosEOperacoesForaDaLista(interacoesDeAlcancaveis.get(interacoesDeAlcancaveis.size() - 1));
 	}
 
 	/**
-	 * aplicar a lista de estados finais à primeira posição de interações de não mortos.
-	 * a partir dos outros estados, marcar como nao morto os estados que alcançam estados nao mortos da fase anterior
-	 * aplicar recursivamente o passo 2 até que nao haja mudanças da penultima interação para a ultima
+	 * aplicar a lista de estados finais à primeira posição de interações de não
+	 * mortos. a partir dos outros estados, marcar como nao morto os estados que
+	 * alcançam estados nao mortos da fase anterior aplicar recursivamente o
+	 * passo 2 até que nao haja mudanças da penultima interação para a ultima
 	 * remover estados que nao pertencem à lista.
 	 */
 	@SuppressWarnings("unchecked")
@@ -435,7 +452,7 @@ public class ElemLexAutomato extends ElemLex {
 
 		do { //encontra quais são não mortos.
 			Vector<String> novaInteracao = new Vector<String>();
-			novaInteracao.addAll((Vector<String>)interacoesDeNaoMortos.get(interacoesDeNaoMortos.size()-1).clone()); //adiciona condição pré-estabelecida da ultima interação, para ser avaliada na interação corrente.
+			novaInteracao.addAll((Vector<String>) interacoesDeNaoMortos.get(interacoesDeNaoMortos.size() - 1).clone()); //adiciona condição pré-estabelecida da ultima interação, para ser avaliada na interação corrente.
 			for (int i = 0; i < operacoes.size(); i++) { //varre as operações e resgata os lados esquerdos que direcionam ao estados finais da ULTIMA interação feita.
 				for (int j = 0; j < operacoes.get(i).size(); j++) { //varre as colunas direcionadas dos não terminais
 					for (int k = 0; k < novaInteracao.size(); k++) { //pega a nova interacao e varre seus nao mortos
@@ -448,9 +465,9 @@ public class ElemLexAutomato extends ElemLex {
 				}
 			}
 			interacoesDeNaoMortos.add(novaInteracao);
-		} while (!interacoesDeNaoMortos.get(interacoesDeNaoMortos.size()-1).equals(interacoesDeNaoMortos.get(interacoesDeNaoMortos.size()-2))); // verifica se a interação anterior foi igual a corrente. se sim, não houve progresso na avaliação e é considerado FINALIZADO.
+		} while (!interacoesDeNaoMortos.get(interacoesDeNaoMortos.size() - 1).equals(interacoesDeNaoMortos.get(interacoesDeNaoMortos.size() - 2))); // verifica se a interação anterior foi igual a corrente. se sim, não houve progresso na avaliação e é considerado FINALIZADO.
 
-		removerEstadosEOperacoesForaDaLista(interacoesDeNaoMortos.get(interacoesDeNaoMortos.size()-1));
+		removerEstadosEOperacoesForaDaLista(interacoesDeNaoMortos.get(interacoesDeNaoMortos.size() - 1));
 	}
 
 	private void removerEstadosEOperacoesForaDaLista(Vector<String> listaPorPreservar) {
@@ -460,7 +477,7 @@ public class ElemLexAutomato extends ElemLex {
 				posicaoDeForasDaLista.add(i);
 			}
 		}
-		for (int i = posicaoDeForasDaLista.size()-1; i >= 0; i--) { //remove estados e a lista de opreacoes do maior para o menor para nao tirar da posicao os ainda não verificados.
+		for (int i = posicaoDeForasDaLista.size() - 1; i >= 0; i--) { //remove estados e a lista de opreacoes do maior para o menor para nao tirar da posicao os ainda não verificados.
 			String provavelEstadoFinal = estados.get(posicaoDeForasDaLista.get(i));
 			estados.removeElementAt(posicaoDeForasDaLista.get(i));
 			estadosFinais.remove(provavelEstadoFinal);
@@ -552,7 +569,8 @@ public class ElemLexAutomato extends ElemLex {
 					estado = estadoCopia.append(anexo).toString();
 				}
 
-				String novaLinha = estado + ElemLexGR.INICIO_DERIVACOES + sb.toString().split(ElemLexGR.INICIO_DERIVACOES)[1] + ElemLexGR.SEPARADOR + ElemLexGR.EPSILON + "\n";
+				String novaLinha = estado + ElemLexGR.INICIO_DERIVACOES + sb.toString().split(ElemLexGR.INICIO_DERIVACOES)[1] + ElemLexGR.SEPARADOR
+						+ ElemLexGR.EPSILON + "\n";
 				sb.insert(0, novaLinha);
 			}
 
@@ -632,8 +650,8 @@ public class ElemLexAutomato extends ElemLex {
 		for (int j = -1; j < alfabeto.length(); j++) { //tentar gerar uma string de até tamanho 2 com esse for.
 			for (int i = 0; i < alfabeto.length(); i++) {
 				if (j == -1) { //tentar primeiro gerar string de tamanho 1
-					if (!stringsAExcluir.contains(alfabeto.charAt(i)+"")) {
-						stringDiferente = alfabeto.charAt(i)+"";
+					if (!stringsAExcluir.contains(alfabeto.charAt(i) + "")) {
+						stringDiferente = alfabeto.charAt(i) + "";
 						i = alfabeto.length(); //sair do for
 						j = alfabeto.length(); //sair do for
 					}
@@ -651,16 +669,14 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	/**
-	 * GERAL:
-	 * novo estado inicial
-	 * destino do novo estado inicial igual aos destinos dos estados iniciais anteriores.
+	 * GERAL: novo estado inicial destino do novo estado inicial igual aos
+	 * destinos dos estados iniciais anteriores.
 	 * 
-	 * PROGRAMAÇÃO:
-	 * criar novo ElemLexAutomato
-	 * eliminar estados conflitantes(dir e esq), por meio de geração de novos estados equivalentes.
-	 * gerar um estado não conflitante com os demais para ser o estado inicial do novo ElemLexAutomato
-	 * tratar conflito do alfabeto.
-	 * direcionar esse novo estado inicial, para as derivações das operações dos antigos estados iniciais.
+	 * PROGRAMAÇÃO: criar novo ElemLexAutomato eliminar estados conflitantes(dir
+	 * e esq), por meio de geração de novos estados equivalentes. gerar um
+	 * estado não conflitante com os demais para ser o estado inicial do novo
+	 * ElemLexAutomato tratar conflito do alfabeto. direcionar esse novo estado
+	 * inicial, para as derivações das operações dos antigos estados iniciais.
 	 * 
 	 * @param elemOutro
 	 * @return
@@ -693,7 +709,7 @@ public class ElemLexAutomato extends ElemLex {
 								}
 								String reconvertendoArrayNaoDeterministico = "";
 								for (int m = 0; m < transicoesNaoDeterministicas.length; m++) { //retorna o string na formatação que estava antes do split;
-									if (transicoesNaoDeterministicas.length-1 == m) {
+									if (transicoesNaoDeterministicas.length - 1 == m) {
 										reconvertendoArrayNaoDeterministico = reconvertendoArrayNaoDeterministico + transicoesNaoDeterministicas[m];
 									} else {
 										reconvertendoArrayNaoDeterministico = reconvertendoArrayNaoDeterministico + transicoesNaoDeterministicas[m] + ",";
@@ -765,7 +781,7 @@ public class ElemLexAutomato extends ElemLex {
 				if (novaTransicao.length() == 0) { //se a nova transição cruzada for "", então é vazia.
 					novaTransicao = vazio;
 				} else {
-					novaTransicao = novaTransicao.substring(0, novaTransicao.length()-1); //se nao for "", então retirar a ultima virgula.
+					novaTransicao = novaTransicao.substring(0, novaTransicao.length() - 1); //se nao for "", então retirar a ultima virgula.
 				}
 				operacoesNovoInicial.add(novaTransicao);
 			}
@@ -785,11 +801,9 @@ public class ElemLexAutomato extends ElemLex {
 
 	}
 
-
 	/**
-	 * inverter estados não finais para finais
-	 * adicionar estados de erro caso hajam
-	 * estado gerado de erro deve ser final, inclusive.
+	 * inverter estados não finais para finais adicionar estados de erro caso
+	 * hajam estado gerado de erro deve ser final, inclusive.
 	 */
 	public void complementarAutomato() {
 		boolean haVazio = false; //boolean que verificaremos a necessidade de uma transicao de erro incluida no automato
