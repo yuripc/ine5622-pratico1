@@ -358,6 +358,7 @@ public class ElemLexAutomato extends ElemLex {
 	 * aplicar recursivamente o passo 2 até que não sejam mais adicionados novos à lista.
 	 * remover estados que nao pertencem a lista.
 	 */
+	@SuppressWarnings("unchecked")
 	private void eliminarInalcancaveis() {
 		Vector<Vector<String>> interacoesDeAlcancaveis = new Vector<Vector<String>>();
 		Vector<String> vetorInicial = new Vector<String>();
@@ -393,6 +394,7 @@ public class ElemLexAutomato extends ElemLex {
 	 * aplicar recursivamente o passo 2 até que nao haja mudanças da penultima interação para a ultima
 	 * remover estados que nao pertencem à lista.
 	 */
+	@SuppressWarnings("unchecked")
 	private void eliminarMortos() {
 		Vector<Vector<String>> interacoesDeNaoMortos = new Vector<Vector<String>>();
 		interacoesDeNaoMortos.add(estadosFinais);
@@ -623,18 +625,172 @@ public class ElemLexAutomato extends ElemLex {
 	 * criar novo ElemLexAutomato
 	 * eliminar estados conflitantes(dir e esq), por meio de geração de novos estados equivalentes.
 	 * gerar um estado não conflitante com os demais para ser o estado inicial do novo ElemLexAutomato
+	 * tratar conflito do alfabeto.
 	 * direcionar esse novo estado inicial, para as derivações das operações dos antigos estados iniciais.
 	 * 
-	 * @param elemDir
+	 * @param elemOutro
+	 * @return 
+	 * @throws CloneNotSupportedException 
 	 */
-	public void unirAutomatos(ElemLexAutomato outroElem) {
-		// TODO Auto-generated method stub
-		int u = 1;
+	public ElemLexAutomato unirAutomatos(ElemLexAutomato elemOutro) {
 		try {
-			ElemLexAutomato novoElemLex = new ElemLexAutomato(""); //TODO
-		} catch (InvalidInputException e) {
+			ElemLexAutomato elemProduto = (ElemLexAutomato) this.clone();
+			Vector<String> estadosDaInteracao = new Vector<String>(); //objeto responsavel por armazenar os estados existentes, para não haver geração de estados novos que já existam
+			estadosDaInteracao.addAll(this.estados); 
+			estadosDaInteracao.addAll(elemOutro.estados);
+
+			for (int i = 0; i < elemProduto.estados.size(); i++) { //fors responsaveis por retirar estados com o mesmo título
+				for (int j = 0; j < elemOutro.estados.size(); j++) {
+					if (elemProduto.estados.get(i).equals(elemOutro.estados.get(j))) { // se houver um estado com nome igual a outro em automatos diferentes
+						String estadoASubstituir = elemProduto.estados.get(i); //pega o estado a ser substituido
+						String estadoSubstituto = gerarStringDiferenteDe(estadosDaInteracao); //gerar um outro símbolo que não seja igual a qualquer estado que já exista.
+						elemProduto.estados.setElementAt(estadoSubstituto, i); //coloca o símbolo gerado no lugar do antigo
+						if (elemProduto.estadosFinais.indexOf(estadoASubstituir) != -1) {//verifica se o estado a ser substituido está na lista de finais
+							elemProduto.estadosFinais.setElementAt(estadoSubstituto, elemProduto.estadosFinais.indexOf(estadoASubstituir)); //se estiver, substituir pelo estado gerado
+						}
+						estadosDaInteracao.setElementAt(estadoSubstituto, estadosDaInteracao.indexOf(estadoASubstituir)); //atualiza a lista de estados da interacao com o estado novo.
+						for (int k = 0; k < elemProduto.operacoes.size(); k++) { //fors responsaveis por atualizar a lista de operacoes com o estado novo.
+							for (int l = 0; l < elemProduto.operacoes.get(k).size(); l++) {
+								String[] transicoesNaoDeterministicas = elemProduto.operacoes.get(k).get(l).split(","); //garantia de trocar os estados caso nao forem deterministicos.
+								for (int m = 0; m < transicoesNaoDeterministicas.length; m++) { //varre as transicoes nao deterministicas.
+									if (transicoesNaoDeterministicas[m].equals(estadoASubstituir)) { //se o simbolo for igual ao simboolo a substituir
+										transicoesNaoDeterministicas[m] = estadoASubstituir; //coloque o simbolo substituto no lugar do simbolo a substituir									
+									}
+								}
+								String reconvertendoArrayNaoDeterministico = "";
+								for (int m = 0; m < transicoesNaoDeterministicas.length; m++) { //retorna o string na formatação que estava antes do split;
+									if (transicoesNaoDeterministicas.length-1 == m) {
+										reconvertendoArrayNaoDeterministico = reconvertendoArrayNaoDeterministico + transicoesNaoDeterministicas[m];
+									} else {
+										reconvertendoArrayNaoDeterministico = reconvertendoArrayNaoDeterministico + transicoesNaoDeterministicas[m] + ",";
+									}
+								}
+								elemProduto.operacoes.get(k).setElementAt(reconvertendoArrayNaoDeterministico, l); //colocando a reconversão novamente na posição onde estava.
+							}
+						}
+						if (elemProduto.estadoInicial.equals(estadoASubstituir)) {
+							elemProduto.estadoInicial = estadoSubstituto; //troca o simbolo inicial se ele for igual ao estado com choque identificado anteriormente.
+						}
+					}
+				}
+			}
+			
+			for (int i = 0; i < elemOutro.alfabeto.size(); i++) { //for responsavel por adicionar algarismos em elemProduto, de elemOutro, que ainda nao existam.
+				if (!elemProduto.alfabeto.contains(elemOutro.alfabeto.get(i))) { //se o algarismo do alfabeto do elemOutro nao existir no elemProduto
+					elemProduto.alfabeto.add(elemOutro.alfabeto.get(i)); //adicionar esse algarismo no elemProduto
+					for (int j = 0; j < elemProduto.operacoes.size(); j++) { //e adicionar produção vazia para cada transição com esse algarismo
+						elemProduto.operacoes.get(j).add(vazio);
+					}
+				}
+			}
+			ElemLexAutomato elemOutroEditado = (ElemLexAutomato) elemOutro.clone(); //objeto responsavel por não editar o elemento vindo como parâmetro. ele deve permanescer como chegou.
+			for (int i = 0; i < elemProduto.alfabeto.size(); i++) { //for responsavel por adicionar algarismos em elemOutro, de elemProduto, que ainda nao existam.
+				if (!elemOutroEditado.alfabeto.contains(elemProduto.alfabeto.get(i))) { //se o algarismo do alfabeto do elemProduto nao existir no elemOutro
+					elemOutroEditado.alfabeto.add(elemProduto.alfabeto.get(i)); //adicionar esse algarismo no elemOutro
+					for (int j = 0; j < elemOutroEditado.operacoes.size(); j++) { //e adicionar produção vazia para cada transição com esse algarismo
+						elemOutroEditado.operacoes.get(j).add(vazio);
+					}
+				}
+			}
+			
+			do {// responsavel por sincronizar as colunas de alfabeto com as operações.
+				for (int i = 0; i < elemProduto.alfabeto.size(); i++) { //assim que encontrar um simbolo do alfabeto fora do lugar, enviar para o final e verificar posições.
+					if (!elemProduto.alfabeto.get(i).equals(elemOutroEditado.alfabeto.get(i))) {
+						char simbolo = elemProduto.alfabeto.get(i);
+						elemProduto.alfabeto.removeElement(simbolo);
+						elemProduto.alfabeto.add(simbolo); //reposiciona no final.
+						
+						for (int j = 0; j < elemProduto.operacoes.size(); j++) {
+							String operacao = elemProduto.operacoes.get(j).get(i);
+							elemProduto.operacoes.get(j).removeElement(operacao);
+							elemProduto.operacoes.get(j).add(operacao); //reposiciona todas as operações ao final.
+						}
+						i = elemProduto.alfabeto.size(); //finaliza o for para que seja feita a verificação de posições.
+					}
+				}
+			} while (!elemOutroEditado.alfabeto.equals(elemProduto.alfabeto)); //fazer isso enquanto elas nao forem iguais.
+			
+			String novoInicial = gerarStringDiferenteDe(estadosDaInteracao);
+			Vector<String> operacoesEstadoInicialProduto = elemProduto.operacoes.get(elemProduto.estados.indexOf(elemProduto.estadoInicial)); //pega as derivações do estado inicial do produto
+			Vector<String> operacoesEstadoInicialOutro = elemOutroEditado.operacoes.get(elemOutroEditado.estados.indexOf(elemOutroEditado.estadoInicial)); //pega as derivações do estado inicial do outro
+			Vector<String> operacoesNovoInicial = new Vector<String>();
+
+			for (int i = 0; i < elemProduto.alfabeto.size(); i++) { //for responsavel por sincronizar operações dos antigos estados iniciais para o novo estado inicial
+				String[] transicoesNaoDeterministicasProduto = operacoesEstadoInicialProduto.get(i).split(",");
+				String[] transicoesNaoDeterministicasOutro = operacoesEstadoInicialOutro.get(i).split(",");
+				String novaTransicao = "";
+				
+				for (int j = 0; j < transicoesNaoDeterministicasProduto.length; j++) {
+					if (!novaTransicao.contains(transicoesNaoDeterministicasProduto[j]) && !transicoesNaoDeterministicasProduto[j].equals(vazio)) {
+						novaTransicao = novaTransicao + transicoesNaoDeterministicasProduto[j] + ",";
+					}
+					if (!novaTransicao.contains(transicoesNaoDeterministicasOutro[j]) && !transicoesNaoDeterministicasOutro[j].equals(vazio)) {
+						novaTransicao = novaTransicao + transicoesNaoDeterministicasOutro[j] + ",";
+					}
+				}
+				if (novaTransicao.length() == 0) { //se a nova transição cruzada for "", então é vazia.
+					novaTransicao = vazio;
+				} else {
+					novaTransicao = novaTransicao.substring(0, novaTransicao.length()-1); //se nao for "", então retirar a ultima virgula.
+				}
+				operacoesNovoInicial.add(novaTransicao);
+			}
+			
+			elemProduto.estadoInicial = novoInicial; //atualiza para o novo inicial
+			elemProduto.estados.addAll(elemOutroEditado.estados); //adiciona estados do outro ao final
+			elemProduto.operacoes.addAll(elemOutroEditado.operacoes); // adiciona operacoes do outro ao final
+			elemProduto.estadosFinais.addAll(elemOutroEditado.estadosFinais);
+			elemProduto.estados.insertElementAt(novoInicial, 0); //coloca o novo inicial na lista de estados
+			elemProduto.operacoes.insertElementAt(operacoesNovoInicial, 0); //coloca operacoes do novo inicial na lista de operacoes.
+			
+			return elemProduto;
+		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
+		return null;
 
+	}
+
+	
+	/**
+	 * inverter estados não finais para finais
+	 * adicionar estados de erro caso hajam
+	 * estado gerado de erro deve ser final, inclusive.
+	 */
+	public void complementarAutomato() {
+		boolean haVazio = false; //boolean que verificaremos a necessidade de uma transicao de erro incluida no automato
+		for (int i = 0; i < operacoes.size(); i++) {
+			for (int j = 0; j < operacoes.get(i).size(); j++) {
+				if (operacoes.get(i).get(j).equals(vazio)) {
+					haVazio = true;
+				}
+			}
+		}
+		String estadoDeErro = "";
+		if (haVazio) { //se houver vazios, insira uma transição equivalenta à de erro.
+			estadoDeErro = gerarStringDiferenteDe(estados);
+			for (int i = 0; i < operacoes.size(); i++) {
+				for (int j = 0; j < operacoes.get(i).size(); j++) {
+					if (operacoes.get(i).get(j).equals(vazio)) {
+						operacoes.get(i).setElementAt(estadoDeErro, j);
+					}
+				}
+			}
+			estados.add(estadoDeErro);
+			
+			Vector<String> operacoesDoEstadoDeErro = new Vector<String>();
+			for (int i = 0; i < alfabeto.size(); i++) { //adiciona as operacoes do novo estado valido(antigo de erro).
+				operacoesDoEstadoDeErro.add(estadoDeErro);
+			}
+			operacoes.add(operacoesDoEstadoDeErro);
+		}
+		
+		@SuppressWarnings("unchecked")
+		Vector<String> novosFinais = (Vector<String>) estados.clone();
+		novosFinais.removeAll(estadosFinais); //remove os estados finais da lista de todos os estados
+		estadosFinais = novosFinais; //atribui a subtração a antiga lista de finais.
+		if (haVazio) { //colocar novo estado de erro também como final caso ele tenha sido gerado.
+			estadosFinais.add(estadoDeErro);
+		}
 	}
 }
