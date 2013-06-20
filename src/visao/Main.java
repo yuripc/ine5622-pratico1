@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -552,15 +553,15 @@ public class Main {
 		if (elem != null) {
 			int input = Integer.parseInt(dialogInput("Qual o tamanho das sentença?"));
 
-			String[] sentencas = elem.gerarSentencas(input);
-			if (sentencas.length == 0) {
+			Vector<String> sentencas = elem.gerarSentencas(input);
+			if (sentencas.size() == 0 || sentencas == null) {
 				messageError("Não existe sentença com esse tamanho");
 			} else {
-				String s = "sentenças de tamanho " + input + ": " + sentencas.length + "\n";
-				for (int i = 0; i < sentencas.length; i++) {
-					s += "- " + sentencas[i] + "\n";
+				StringBuilder sb = new StringBuilder("sentenças de tamanho " + input + ": " + sentencas.size() + "\n");
+				for (String sentenca: sentencas) {
+					sb.append("- " + sentenca + "\n");
 				}
-				messageInformation(s);
+				messageInformation(sb.toString());
 			}
 		}
 	}

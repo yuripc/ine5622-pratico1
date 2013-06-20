@@ -29,12 +29,26 @@ public abstract class ElemLex implements Cloneable {
 
 	public boolean reconhecerSentenca(String s) {
 		// TODO Auto-generated method stub
+		ElemLexAutomato elem = this.toAutomato();
+
+		String resultado;
+		if(elem.ehSentencaLinguagem(s)){
+			resultado = "";
+		} else{
+			resultado = "";
+		}
+
 		System.out.println("não implementado");
 		return false;
 	}
 
-	public String[] gerarSentencas(int n) {
+	public Vector<String> gerarSentencas(int n) {
 		// TODO Auto-generated method stub
+
+		ElemLexAutomato elem = this.toAutomato();
+
+		elem.gerarSentencasValidas(n);
+
 		System.out.println("não implementado");
 		return null;
 	}

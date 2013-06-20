@@ -220,6 +220,41 @@ public class ElemLexAutomato extends ElemLex {
 		eliminarEquivalentes();
 	}
 
+	protected boolean ehSentencaLinguagem(String s){
+		//TODO
+		return false;
+	}
+
+	protected Vector<String> gerarSentencasValidas(int tamanho) {
+
+		Vector<String> sentencasValidas = new Vector<String>();
+		Vector<String> permutacoes = permutar(tamanho);
+
+		for(String permutacao : permutacoes){
+			if(ehSentencaLinguagem(permutacao)){
+				sentencasValidas.add(permutacao);
+			}
+		}
+
+		return sentencasValidas;
+	}
+
+	private Vector<String> permutar(int tamanho) {
+		Vector<String> resultado = new Vector<String>();
+		permutar(tamanho,"",resultado);
+		return resultado;
+	}
+
+	private void permutar(int tamanho, String atual, Vector<String> resultados) {
+		if(atual.length()==tamanho){
+			resultados.add(atual);
+		} else {
+			for (int i = 0; i < alfabeto.size(); i++) {
+				permutar(tamanho,atual+alfabeto.get(i), resultados);
+			}
+		}
+	}
+
 
 	private void adicionarEstadoDeErro() {
 		estados.add(vazio); //adiciona um estado de erro ao final do automato.
