@@ -150,6 +150,7 @@ public class ElemLexAutomato extends ElemLex {
 				if (!estados.contains(proxEstado) && !estadosPendentes.contains(proxEstado) && !proxEstado.equals(vazio)) {
 					estadosPendentes.add(proxEstado);
 				}
+
 				setOperacao(estado, entrada, proxEstado.replace(separador, ""));
 			}
 		}
@@ -168,7 +169,7 @@ public class ElemLexAutomato extends ElemLex {
 					estadosPendentes.add(proxEstado);
 				}
 
-				setOperacao(estado, entrada, proxEstado);
+				setOperacao(estado, entrada, proxEstado.replace(separador, ""));
 			}
 
 			String[] subEstados = estadoNaoDeterminizado.split(separador);
