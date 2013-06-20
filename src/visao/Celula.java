@@ -11,7 +11,7 @@ public abstract class Celula extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	DocumentFilter filtro = new DocumentFilter() {
+	protected final DocumentFilter filtro = new DocumentFilter() {
 		@Override
 		public void insertString(DocumentFilter.FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
 			fb.insertString(offset, text.replaceAll("[#\t]+", ""), attr);

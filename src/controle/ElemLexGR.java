@@ -87,7 +87,7 @@ public class ElemLexGR extends ElemLex {
 							}
 
 							if (transicaoPossivel) {
-								if (!alfabeto.contains(entrada.charAt(0))) {
+								if (!alfabeto.contains(entrada.charAt(0)) && !entrada.equals(EPSILON)) {
 									alfabeto.add(entrada.charAt(0));
 								}
 								if (!operacoesVector.contains(transicao)) {
@@ -120,7 +120,6 @@ public class ElemLexGR extends ElemLex {
 		}
 	}
 
-	
 	/**
 	 * 
 	 * pegar cada um do alfabeto e, segundo cada um deles, agrupar as operações.
@@ -130,25 +129,71 @@ public class ElemLexGR extends ElemLex {
 	@Override
 	public ElemLexAutomato toAutomato() {
 		Vector<Vector<String>> novoVetorDeOperacoes = new Vector<Vector<String>>(); //cria novo vetor vazio
-		for (int i = 0; i < estados.size(); i++) {
-			novoVetorDeOperacoes.add(new Vector<String>()); //cria uma quantidade de vetores igual ao numero de estados existentes(referentes a cada operação de cada estado)
+
+		String estadoFinal = "F";
+		String estadoFinalBase = "F";
+		for (int i = 1; estados.contains(estadoFinal); i++) {
+			estadoFinal = estadoFinalBase + i;
 		}
-		
+
 		for (int i = 0; i < operacoes.size(); i++) {//operacoes de um estado do automato
 			Vector<String> operacoesDoEstado = new Vector<String>();
-			for (int k = 0; k < alfabeto.size(); k++) { // cada uma letra do alfabeto.
-				for (int j = 0; j < operacoes.get(i).size(); j++) { //cada uma das operações do estado do automato
-					if (alfabeto.get(k).equals(operacoes.get(i).get(j).charAt(0))) {
-						
+			for (int k = 0; k < alfabeto.size(); k++) {
+				operacoesDoEstado.add("-");
+			}
+			for (int j = 0; j < operacoes.get(i).size(); j++) { //cada uma das operações do estado do automato
+				int posAlfabeto = alfabeto.indexOf(operacoes.get(i).get(j).charAt(0));
+				if (posAlfabeto >= 0) {
+					String estado = operacoes.get(i).get(j).substring(1);
+					if (estado.equals("")) {
+						estado = estadoFinal;
+					}
+					if (operacoesDoEstado.get(posAlfabeto).equals("-")) {
+						operacoesDoEstado.set(posAlfabeto, estado);
+					} else {
+						operacoesDoEstado.set(posAlfabeto, operacoesDoEstado.get(posAlfabeto) + "," + estado);
 					}
 				}
 			}
+
+			novoVetorDeOperacoes.add(operacoesDoEstado);
+
 		}
-		
-		
-		System.out.println("não implementado");
-		// TODO Auto-generated method stub
-		return null;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("\t\t");
+		for (char entrada : alfabeto) {
+			sb.append(entrada).append("\t");
+		}
+		sb.append("\n");
+
+		for (int linha = 0; linha < estados.size(); linha++) {
+			if (linha == 0) {
+				if (operacoes.get(linha).contains(EPSILON)) {
+					sb.append("*");
+				}
+				sb.append("->");
+			}
+			sb.append("\t").append(estados.get(linha)).append("\t");
+			for (int coluna = 0; coluna < novoVetorDeOperacoes.get(linha).size(); coluna++) {
+				sb.append(novoVetorDeOperacoes.get(linha).get(coluna)).append("\t");
+			}
+			sb.append("\n");
+		}
+
+		sb.append("*").append("\t").append(estadoFinal).append("\t");
+		for(int coluna = 0;coluna<alfabeto.size();coluna++){
+			sb.append("-\t");
+		}
+		sb.append("\n");
+
+		try {
+			return new ElemLexAutomato(sb.toString());
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
