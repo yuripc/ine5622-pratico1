@@ -23,6 +23,8 @@ public class ElemLexAutomato extends ElemLex {
 	private int colunas;
 	private Vector<Vector<Celula>> mapa;
 	private JPanel bottomPanel;
+	private JButton btnRemoveLine;
+	private JButton btnRemoveColumn;
 
 	public ElemLexAutomato() {
 		super();
@@ -77,7 +79,7 @@ public class ElemLexAutomato extends ElemLex {
 		gbc_lblNewLabel.gridy = 0;
 		panel_3.add(lblNewLabel, gbc_lblNewLabel);
 
-		JButton btnRemoveLine = new JButton("-");
+		btnRemoveLine = new JButton("-");
 		btnRemoveLine.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -85,10 +87,10 @@ public class ElemLexAutomato extends ElemLex {
 			}
 		});
 
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 1;
-		panel_3.add(btnRemoveLine, gbc_btnNewButton);
+		GridBagConstraints gbc_btnRemoveLine = new GridBagConstraints();
+		gbc_btnRemoveLine.gridx = 0;
+		gbc_btnRemoveLine.gridy = 1;
+		panel_3.add(btnRemoveLine, gbc_btnRemoveLine);
 
 		JButton btnAddLine = new JButton("+");
 		btnAddLine.addActionListener(new ActionListener() {
@@ -128,17 +130,17 @@ public class ElemLexAutomato extends ElemLex {
 		gbc_lblNewLabel_1.gridy = 0;
 		panel_4.add(lblNewLabel_1, gbc_lblNewLabel_1);
 
-		JButton btnRemoveColumn = new JButton("-");
+		btnRemoveColumn = new JButton("-");
 		btnRemoveColumn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				removeColumn();
 			}
 		});
-		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
-		gbc_btnNewButton_2.gridx = 0;
-		gbc_btnNewButton_2.gridy = 1;
-		panel_4.add(btnRemoveColumn, gbc_btnNewButton_2);
+		GridBagConstraints gbc_btnRemoveColumn = new GridBagConstraints();
+		gbc_btnRemoveColumn.gridx = 0;
+		gbc_btnRemoveColumn.gridy = 1;
+		panel_4.add(btnRemoveColumn, gbc_btnRemoveColumn);
 
 		JButton buttonAddColumn = new JButton("+");
 		buttonAddColumn.addActionListener(new ActionListener() {
@@ -225,7 +227,10 @@ public class ElemLexAutomato extends ElemLex {
 		for (int linha = 0; linha < linhas; linha++) {
 			addComponent(linha, colunas);
 		}
+
 		colunas++;
+
+		checkRemoveButtons();
 	}
 
 	private void removeColumn() {
@@ -235,7 +240,8 @@ public class ElemLexAutomato extends ElemLex {
 			tabela.remove(celula);
 			mapa.get(linha).remove(colunas);
 		}
-		this.revalidate();
+
+		checkRemoveButtons();
 	}
 
 	private void addLine() {
@@ -243,7 +249,10 @@ public class ElemLexAutomato extends ElemLex {
 		for (int coluna = 0; coluna < colunas; coluna++) {
 			addComponent(linhas, coluna);
 		}
+
 		linhas++;
+
+		checkRemoveButtons();
 	}
 
 	private void removeLine() {
@@ -252,8 +261,12 @@ public class ElemLexAutomato extends ElemLex {
 			Celula celula = mapa.get(linhas).get(coluna);
 			tabela.remove(celula);
 		}
+
 		mapa.remove(linhas);
+
 		this.revalidate();
+
+		checkRemoveButtons();
 	}
 
 	private void addComponent(int linha, int coluna) {
@@ -286,4 +299,17 @@ public class ElemLexAutomato extends ElemLex {
 		mapa.get(linha).get(coluna).setFocus();
 	}
 
+	protected void checkRemoveButtons(){
+		if (colunas <= 3) {
+			btnRemoveColumn.setEnabled(false);
+		} else {
+			btnRemoveColumn.setEnabled(true);
+		}
+
+		if (linhas <= 2) {
+			btnRemoveLine.setEnabled(false);
+		} else {
+			btnRemoveLine.setEnabled(true);
+		}
+	}
 }
