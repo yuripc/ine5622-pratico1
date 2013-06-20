@@ -6,6 +6,7 @@ import java.awt.Dimension;
 
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
+import javax.swing.text.AbstractDocument;
 
 public class CelulaCabecalho extends Celula {
 	private static final long serialVersionUID = 1L;
@@ -23,6 +24,8 @@ public class CelulaCabecalho extends Celula {
 		textField.setBorder(border);
 		textField.setHorizontalAlignment(JTextField.CENTER);
 		textField.setDisabledTextColor(Color.BLACK);
+
+		((AbstractDocument) textField.getDocument()).setDocumentFilter(filtro);
 
 		this.add(textField, BorderLayout.CENTER);
 	}

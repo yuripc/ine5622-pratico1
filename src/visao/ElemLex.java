@@ -2,8 +2,7 @@ package visao;
 
 import javax.swing.JPanel;
 
-public abstract class ElemLex extends JPanel implements Cloneable{
-
+public abstract class ElemLex extends JPanel implements Cloneable {
 	private static final long serialVersionUID = 1L;
 
 	public ElemLex() {
@@ -16,10 +15,11 @@ public abstract class ElemLex extends JPanel implements Cloneable{
 	}
 
 	protected abstract void initialize();
+
 	protected abstract void loadString(String s) throws Exception;
 
 	@Override
-	public ElemLex clone(){
+	public ElemLex clone() {
 		try {
 			return (ElemLex) super.clone();
 		} catch (CloneNotSupportedException e) {
@@ -28,9 +28,8 @@ public abstract class ElemLex extends JPanel implements Cloneable{
 		}
 	}
 
-	public abstract void irPara(int linha,int coluna);
+	public abstract void irPara(int linha, int coluna);
 
 	public abstract void habilitarEdicao(boolean habilitar);
-
 
 }

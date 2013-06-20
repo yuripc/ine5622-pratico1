@@ -8,6 +8,7 @@ import java.awt.Insets;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
+import javax.swing.text.AbstractDocument;
 
 public class CelulaCorpo extends Celula {
 	private static final long serialVersionUID = 1L;
@@ -30,6 +31,8 @@ public class CelulaCorpo extends Celula {
 		scrollPane.setViewportView(textArea);
 		scrollPane.setPreferredSize(dimension);
 		scrollPane.setBorder(border);
+
+		((AbstractDocument) textArea.getDocument()).setDocumentFilter(filtro);
 
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
