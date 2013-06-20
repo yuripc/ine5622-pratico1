@@ -43,15 +43,17 @@ public abstract class ElemLex implements Cloneable {
 		ElemLexAutomato elemEsq = this.toAutomato();
 		ElemLexAutomato elemDir = elemLexDir.toAutomato();
 
-		elemEsq.unirAutomatos(elemDir);
+		ElemLexAutomato elemProduto = elemEsq.unirAutomatos(elemDir);
 
-		return new Operacao("União", returnToOrigin(elemEsq));
+		return new Operacao("União", returnToOrigin(elemProduto));
 	}
 
-	public Operacao complemento(ElemLex outroElem) {
-		// TODO Auto-generated method stub
-		System.out.println("não implementado");
-		return null;
+	public Operacao complemento() {
+		ElemLexAutomato elem = toAutomato();
+
+		elem.complementarAutomato();
+
+		return new Operacao("Complemento", returnToOrigin(elem));
 	}
 
 	protected ElemLex returnToOrigin(ElemLex elemGerado) {

@@ -24,12 +24,13 @@ public class Main {
 	private static JSplitPane splitPane;
 	private static controle.Arquivo arquivo = new controle.Arquivo();
 	private static JMenuItem mntmUniao;
-	private static JMenuItem mntmComplemento;
+	private static JMenuItem mntmA1Complemento;
 	private static JMenuItem mntmA1Determinizar;
 	private static JMenuItem mntmA1Minimizar;
 	private static JMenuItem mntmA1ReconhecerSentenca;
 	private static JMenuItem mntmA1GerarSentencas;
 	private static JMenuItem mntmA1Converter;
+	private static JMenuItem mntmA2Complemento;
 	private static JMenuItem mntmA2Determinizar;
 	private static JMenuItem mntmA2Minimizar;
 	private static JMenuItem mntmA2GerarSentencas;
@@ -109,9 +110,6 @@ public class Main {
 		mntmUniao = new JMenuItem("União");
 		mnAcoes.add(mntmUniao);
 
-		mntmComplemento = new JMenuItem("Complemento");
-		mnAcoes.add(mntmComplemento);
-
 		JSeparator separator_4 = new JSeparator();
 		mnAcoes.add(separator_4);
 
@@ -132,6 +130,9 @@ public class Main {
 
 		JSeparator sepA11 = new JSeparator();
 		mnA1.add(sepA11);
+
+		mntmA1Complemento = new JMenuItem("Complemento");
+		mnA1.add(mntmA1Complemento);
 
 		mntmA1Determinizar = new JMenuItem("Determinizar");
 		mnA1.add(mntmA1Determinizar);
@@ -168,6 +169,9 @@ public class Main {
 
 		JSeparator sepA21 = new JSeparator();
 		mnA2.add(sepA21);
+		
+		mntmA2Complemento = new JMenuItem("Complemento");
+		mnA2.add(mntmA2Complemento);
 
 		mntmA2Determinizar = new JMenuItem("Determinizar");
 		mnA2.add(mntmA2Determinizar);
@@ -287,17 +291,9 @@ public class Main {
 				if (elemEsq != null && elemDir != null) {
 					new Operacoes(elemEsq.uniao(elemDir));
 				}
-				//TODO doing.
 			}
 		});
 
-		mntmComplemento.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO
-				System.out.println("Ação não configurada");
-			}
-		});
 
 		mntmDebug.addActionListener(new ActionListener() {
 			@Override
@@ -317,6 +313,16 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				addComponent(true, new ElemLexGR());
+			}
+		});
+
+		mntmA1Complemento.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controle.ElemLex elem = criarElem(true);
+				if (elem != null) {
+					new Operacoes(elem.complemento());
+				}
 			}
 		});
 
@@ -378,6 +384,16 @@ public class Main {
 			}
 		});
 
+		mntmA2Complemento.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controle.ElemLex elem = criarElem(false);
+				if (elem != null) {
+					new Operacoes(elem.complemento());
+				}
+			}
+		});
+		
 		mntmA2Determinizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -429,6 +445,7 @@ public class Main {
 		if (isLeft) {
 			splitPane.setLeftComponent(component);
 
+			mntmA1Complemento.setEnabled(habilitarMenuElemento);
 			mntmA1Determinizar.setEnabled(habilitarMenuElemento);
 			mntmA1Minimizar.setEnabled(habilitarMenuElemento);
 			mntmA1ReconhecerSentenca.setEnabled(habilitarMenuElemento);
@@ -446,6 +463,7 @@ public class Main {
 		} else {
 			splitPane.setRightComponent(component);
 
+			mntmA2Complemento.setEnabled(habilitarMenuElemento);
 			mntmA2Determinizar.setEnabled(habilitarMenuElemento);
 			mntmA2Minimizar.setEnabled(habilitarMenuElemento);
 			mntmA2ReconhecerSentenca.setEnabled(habilitarMenuElemento);
@@ -467,7 +485,6 @@ public class Main {
 		boolean habilitarMenuAcao = splitPane.getLeftComponent() instanceof ElemLex && splitPane.getRightComponent() instanceof ElemLex;
 
 		mntmUniao.setEnabled(habilitarMenuAcao);
-		mntmComplemento.setEnabled(habilitarMenuAcao);
 
 	}
 
