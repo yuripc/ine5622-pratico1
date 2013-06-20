@@ -9,6 +9,7 @@ public class ElemLexGR extends ElemLex {
 	static final String SEPARADOR = "|";
 
 	public ElemLexGR(String elementoLexico) throws InvalidInputException {
+		alfabeto = new Vector<Character>();
 		estados = new Vector<String>();
 		operacoes = new Vector<Vector<String>>();
 
@@ -86,7 +87,12 @@ public class ElemLexGR extends ElemLex {
 							}
 
 							if (transicaoPossivel) {
-								operacoesVector.add(transicao);
+								if (!alfabeto.contains(entrada.charAt(0))) {
+									alfabeto.add(entrada.charAt(0));
+								}
+								if (!operacoesVector.contains(transicao)) {
+									operacoesVector.add(transicao);
+								}
 							} else {
 								throw new InvalidInputException("Exceção não tratada");
 							}

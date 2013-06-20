@@ -14,6 +14,7 @@ public class ElemLexAutomato extends ElemLex {
 
 	public ElemLexAutomato(String input) throws InvalidInputException {
 		String[] s = input.split("\n");
+
 		alfabeto = new Vector<Character>();
 		estados = new Vector<String>();
 		estadoInicial = "";
@@ -55,7 +56,6 @@ public class ElemLexAutomato extends ElemLex {
 			}
 			if (!((coluna0.length() == 3 && coluna0.contains("*") && coluna0.contains("->")) || (coluna0.length() == 2 && coluna0.contains("->"))
 					|| (coluna0.length() == 1 && coluna0.contains("*")) || (coluna0.length() == 0))) {
-
 				throw new InvalidInputException("Apenas '->' ou '*' são válidos", linha, 0);
 			}
 		}
