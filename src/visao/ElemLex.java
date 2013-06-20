@@ -23,7 +23,6 @@ public abstract class ElemLex extends JPanel implements Cloneable{
 		try {
 			return (ElemLex) super.clone();
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}

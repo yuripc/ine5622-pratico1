@@ -77,21 +77,21 @@ public class ElemLexAutomato extends ElemLex {
 		gbc_lblNewLabel.gridy = 0;
 		panel_3.add(lblNewLabel, gbc_lblNewLabel);
 
-		JButton btnNewButton = new JButton("-");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnRemoveLine = new JButton("-");
+		btnRemoveLine.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO
+				removeLine();
 			}
 		});
 
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.gridx = 0;
 		gbc_btnNewButton.gridy = 1;
-		panel_3.add(btnNewButton, gbc_btnNewButton);
+		panel_3.add(btnRemoveLine, gbc_btnNewButton);
 
-		JButton btnNewButton_1 = new JButton("+");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		JButton btnAddLine = new JButton("+");
+		btnAddLine.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				addLine();
@@ -100,7 +100,7 @@ public class ElemLexAutomato extends ElemLex {
 		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
 		gbc_btnNewButton_1.gridx = 1;
 		gbc_btnNewButton_1.gridy = 1;
-		panel_3.add(btnNewButton_1, gbc_btnNewButton_1);
+		panel_3.add(btnAddLine, gbc_btnNewButton_1);
 
 		JPanel panel_2 = new JPanel();
 		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
@@ -128,20 +128,20 @@ public class ElemLexAutomato extends ElemLex {
 		gbc_lblNewLabel_1.gridy = 0;
 		panel_4.add(lblNewLabel_1, gbc_lblNewLabel_1);
 
-		JButton btnNewButton_2 = new JButton("-");
-		btnNewButton_2.addActionListener(new ActionListener() {
+		JButton btnRemoveColumn = new JButton("-");
+		btnRemoveColumn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO
+				removeColumn();
 			}
 		});
 		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
 		gbc_btnNewButton_2.gridx = 0;
 		gbc_btnNewButton_2.gridy = 1;
-		panel_4.add(btnNewButton_2, gbc_btnNewButton_2);
+		panel_4.add(btnRemoveColumn, gbc_btnNewButton_2);
 
-		JButton btnNewButton_3 = new JButton("+");
-		btnNewButton_3.addActionListener(new ActionListener() {
+		JButton buttonAddColumn = new JButton("+");
+		buttonAddColumn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				addColumn();
@@ -150,7 +150,7 @@ public class ElemLexAutomato extends ElemLex {
 		GridBagConstraints gbc_btnNewButton_3 = new GridBagConstraints();
 		gbc_btnNewButton_3.gridx = 1;
 		gbc_btnNewButton_3.gridy = 1;
-		panel_4.add(btnNewButton_3, gbc_btnNewButton_3);
+		panel_4.add(buttonAddColumn, gbc_btnNewButton_3);
 
 		mapa = new Vector<Vector<Celula>>();
 
@@ -222,18 +222,38 @@ public class ElemLexAutomato extends ElemLex {
 	}
 
 	private void addColumn() {
-		for (int i = 0; i < linhas; i++) {
-			addComponent(i, colunas);
+		for (int linha = 0; linha < linhas; linha++) {
+			addComponent(linha, colunas);
 		}
 		colunas++;
 	}
 
+	private void removeColumn() {
+		colunas--;
+		for (int linha = 0; linha < linhas; linha++) {
+			Celula celula = mapa.get(linha).get(colunas);
+			tabela.remove(celula);
+			mapa.get(linha).remove(colunas);
+		}
+		this.revalidate();
+	}
+
 	private void addLine() {
 		mapa.add(new Vector<Celula>());
-		for (int i = 0; i < colunas; i++) {
-			addComponent(linhas, i);
+		for (int coluna = 0; coluna < colunas; coluna++) {
+			addComponent(linhas, coluna);
 		}
 		linhas++;
+	}
+
+	private void removeLine() {
+		linhas--;
+		for (int coluna = 0; coluna < colunas; coluna++) {
+			Celula celula = mapa.get(linhas).get(coluna);
+			tabela.remove(celula);
+		}
+		mapa.remove(linhas);
+		this.revalidate();
 	}
 
 	private void addComponent(int linha, int coluna) {

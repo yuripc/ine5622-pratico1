@@ -16,7 +16,6 @@ public class CelulaCabecalho extends Celula {
 	private static final LineBorder border = new LineBorder(Color.BLACK);
 
 	public CelulaCabecalho() {
-		// TODO Auto-generated method stub
 		super();
 
 		textField = new JTextField();

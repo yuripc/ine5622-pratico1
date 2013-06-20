@@ -9,8 +9,6 @@ public class ElemLexGR extends ElemLex {
 	static final String SEPARADOR = "|";
 
 	public ElemLexGR(String elementoLexico) throws InvalidInputException {
-		// TODO Auto-generated method stub
-
 		estados = new Vector<String>();
 		operacoes = new Vector<Vector<String>>();
 
@@ -56,8 +54,9 @@ public class ElemLexGR extends ElemLex {
 					String entrada = operacao.trim().substring(0, 1);
 					String proxEstado = operacao.trim().substring(1, operacao.trim().length());
 
+					String transicao = "";
 					try {
-						String transicao = entrada + proxEstado;
+						transicao = entrada + proxEstado;
 
 						if (!operacoesVector.contains(transicao)) {
 
@@ -71,8 +70,7 @@ public class ElemLexGR extends ElemLex {
 								} else {
 									transicaoPossivel = true;
 								}
-							}
-							else if (proxEstado.length() == 0) {
+							} else if (proxEstado.length() == 0) {
 								if (isEntradaValida(entrada)) {
 									transicaoPossivel = true;
 								}
@@ -87,17 +85,19 @@ public class ElemLexGR extends ElemLex {
 								}
 							}
 
-							if(transicaoPossivel){
+							if (transicaoPossivel) {
 								operacoesVector.add(transicao);
-							} else{
+							} else {
 								throw new InvalidInputException("Exceção não tratada");
 							}
 						}
 
 						parteProcessada.append(transicao).append("|");
 
+						transicao = "";
 					} catch (InvalidInputException e) {
-						throw new InvalidInputException(e.getMessage(), linha, parteProcessada.length());
+						throw new InvalidInputException(e.getMessage(), linha, (parteProcessada.length() + transicao.length()
+								- transicao.replace(" ", "").length() + 1));
 					}
 				}
 			}

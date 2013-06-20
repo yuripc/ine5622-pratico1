@@ -169,7 +169,7 @@ public class Main {
 
 		JSeparator sepA21 = new JSeparator();
 		mnA2.add(sepA21);
-		
+
 		mntmA2Complemento = new JMenuItem("Complemento");
 		mnA2.add(mntmA2Complemento);
 
@@ -248,6 +248,7 @@ public class Main {
 						}
 					}
 				} catch (Exception e1) {
+					e1.printStackTrace();
 					messageError("Arquivo está corrompido e não pôde ser lido");
 				}
 
@@ -393,7 +394,7 @@ public class Main {
 				}
 			}
 		});
-		
+
 		mntmA2Determinizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -431,7 +432,6 @@ public class Main {
 		mntmA2Converter.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
 				controle.ElemLex elem = criarElem(false);
 				if (elem != null) {
 					new Operacoes(elem.converter());

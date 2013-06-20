@@ -48,7 +48,11 @@ public class ElemLexGR extends ElemLex {
 
 	@Override
 	public void irPara(int linha, int coluna) {
-		// TODO Auto-generated method stub
-		System.out.println("não implementado");
+		int pos = 0;
+		String[] linhas = textArea.getText().split("\n");
+		for(int linhaTexto = 0;linhaTexto<linha; linhaTexto++){
+			pos+=linhas[linhaTexto].length();
+		}
+		textArea.setCaretPosition(pos+coluna);
 	}
 }

@@ -18,7 +18,6 @@ public class CelulaCorpo extends Celula {
 	private static final LineBorder border = new LineBorder(Color.BLACK);
 
 	public CelulaCorpo() {
-		// TODO Auto-generated method stub
 		super();
 
 		textArea = new JTextArea();
