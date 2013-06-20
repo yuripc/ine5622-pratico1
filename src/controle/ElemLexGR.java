@@ -114,8 +114,32 @@ public class ElemLexGR extends ElemLex {
 		}
 	}
 
+	
+	/**
+	 * 
+	 * pegar cada um do alfabeto e, segundo cada um deles, agrupar as operações.
+	 * 
+	 * 
+	 */
 	@Override
 	public ElemLexAutomato toAutomato() {
+		Vector<Vector<String>> novoVetorDeOperacoes = new Vector<Vector<String>>(); //cria novo vetor vazio
+		for (int i = 0; i < estados.size(); i++) {
+			novoVetorDeOperacoes.add(new Vector<String>()); //cria uma quantidade de vetores igual ao numero de estados existentes(referentes a cada operação de cada estado)
+			
+		}
+		
+		for (int i = 0; i < operacoes.size(); i++) {
+			for (int j = 0; j < operacoes.get(i).size(); j++) {
+				for (int k = 0; k < alfabeto.size(); k++) {
+					if (alfabeto.get(k).equals(operacoes.get(i).get(j).charAt(0))) {
+						
+					}
+				}
+			}
+		}
+		
+		
 		System.out.println("não implementado");
 		// TODO Auto-generated method stub
 		return null;
