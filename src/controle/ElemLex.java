@@ -18,12 +18,16 @@ public abstract class ElemLex implements Cloneable {
 		return new Operacao("Determinimização", returnToOrigin(elem));
 	}
 
-	public Operacao minimizar() {
+	public Operacao minimizar() throws Exception {
 		ElemLexAutomato elem = this.toAutomato();
 
 		elem.minimizarAutomato();
-
-		return new Operacao("Minimização", returnToOrigin(elem));
+		if (elem.estados.size() == 0) {
+			throw new Exception("Linguagem vazia");
+		}
+		Operacao o = new Operacao("Minimização", returnToOrigin(elem));
+		
+		return o;
 	}
 
 	public boolean reconhecerSentenca(String s) {

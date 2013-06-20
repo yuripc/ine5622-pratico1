@@ -344,7 +344,11 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				controle.ElemLex elem = criarElem(true);
 				if (elem != null) {
-					new Operacoes(elem.minimizar());
+					try {
+						new Operacoes(elem.minimizar());
+					} catch (Exception e1) {
+						messageError(e1.getMessage());
+					}
 				}
 			}
 		});
@@ -412,7 +416,11 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				controle.ElemLex elem = criarElem(false);
 				if (elem != null) {
-					new Operacoes(elem.minimizar());
+					try {
+						new Operacoes(elem.minimizar());
+					} catch (Exception e1) {
+						messageError(e1.getMessage());
+					}
 				}
 			}
 		});
