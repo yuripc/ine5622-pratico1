@@ -226,34 +226,36 @@ public class Main {
 				try {
 					panels = arquivo.abrir();
 
-					try {
-						addComponent(true, panels[0]);
-						erroEsquerda = false;
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+					if (panels != null) {
+						try {
+							addComponent(true, panels[0]);
+							erroEsquerda = false;
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
 
-					try {
-						addComponent(false, panels[1]);
-						erroDireita = false;
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
+						try {
+							addComponent(false, panels[1]);
+							erroDireita = false;
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
 
-					if (erroEsquerda || erroDireita) {
-						if (erroEsquerda && erroDireita) {
-							messageError("Os dois elementos léxicos estão corrompidos e não puderam ser lidos");
-						} else if (erroEsquerda) {
-							messageError("O elemento léxico da esquerda está corrompido e não pôde ser lido");
-						} else {
-							messageError("O elemento léxico da direita está corrompido e não pôde ser lido");
+						if (erroEsquerda || erroDireita) {
+							if (erroEsquerda && erroDireita) {
+								messageError("Os dois elementos léxicos estão corrompidos e não puderam ser lidos");
+							} else if (erroEsquerda) {
+								messageError("O elemento léxico da esquerda está corrompido e não pôde ser lido");
+							} else {
+								messageError("O elemento léxico da direita está corrompido e não pôde ser lido");
+							}
 						}
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
 					messageError("Arquivo está corrompido e não pôde ser lido");
-				}
 
+				}
 			}
 		});
 
@@ -296,7 +298,6 @@ public class Main {
 				}
 			}
 		});
-
 
 		mntmDebug.addActionListener(new ActionListener() {
 			@Override
@@ -521,7 +522,6 @@ public class Main {
 				pos = "direita";
 			}
 
-
 			if (e.getLinha() >= 0) {
 				((ElemLex) panel).irPara(e.getLinha(), e.getColuna());
 			}
@@ -568,7 +568,7 @@ public class Main {
 			} else {
 				Collections.sort(sentencas);
 				StringBuilder sb = new StringBuilder("sentenças de tamanho " + input + ": " + sentencas.size() + "\n");
-				for (String sentenca: sentencas) {
+				for (String sentenca : sentencas) {
 					sb.append("- " + sentenca + "\n");
 				}
 				messageInformation(sb.toString());
